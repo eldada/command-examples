@@ -42,6 +42,11 @@ $ docker system prune
 $ docker system prune -a
 ```
 
+Docker remove dangling volumes
+```bash
+$ docker volume rm $(docker volume ls -f dangling=true -q)
+```
+
 Docker quit an interactive session without closing it:
 ```
 # Ctrl + p + q (order is important)
@@ -58,6 +63,12 @@ $ docker save -o ~/the.img the-image:tag
 
 # Load into another Docker engine
 docker load -i ~/the.img
+```
+
+Connect to Docker VM on Mac
+```bash
+$ screen ~/Library/Containers/com.docker.docker/Data/com.docker.driver.amd64-linux/tty
+# Ctrl +A +D to exit
 ```
 
 
