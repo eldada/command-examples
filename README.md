@@ -28,6 +28,12 @@ $ for a in {0..9}; do \
 
 
 ## Docker
+Allow a user to run docker commands without sudo
+```bash
+sudo usermod -aG docker user
+# IMPORTANT: Log out and back in after this change!
+```
+
 Prune Docker unused resources
 ```bash
 $ docker system prune
@@ -45,13 +51,14 @@ Attache back to it
 $ docker attach <container-id>
 ```
 
+Save a Docker image to be loaded in another computer
+```bash
+# Save
+$ docker save -o ~/the.img the-image:tag
 
-
-Allow my user to run docker commands without sudo:
-sudo usermod -aG docker <user>
-sudo usermod -aG docker vagrant
-IMPORTANT: Log out and back in after this change!
-
+# Load into another Docker engine
+docker load -i ~/the.img
+```
 
 
 ## Kubernetes
