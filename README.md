@@ -82,6 +82,18 @@ $ kubectl get events
 $ kubectl get events --namespace=kube-system
 ```
 
+Get all cluster nodes IPs and names
+```bash
+# Single call to K8s API
+$ kubectl get nodes -o json | grep -A 12 addresses
+
+# A loop for more flexibility
+$ for n in $(kubectl get nodes -o name); do \
+    echo -e "\nNode ${n}"; \
+    kubectl get ${n} -o json | grep -A 8 addresses; \
+  done
+```
+
 See all cluster nodes CPU and Memory requests and limits
 ```bash
 # Option 1
