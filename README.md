@@ -14,6 +14,18 @@ $ mkdir -p certs/my_com
 $ openssl req -nodes -x509 -newkey rsa:4096 -keyout certs/my_com/my_com.key -out certs/my_com/my_com.crt -days 356 -subj "/C=US/ST=California/L=SantaClara/O=IT/CN=localhost"
 ```
 
+Create binary files with random content
+```bash
+# Just one file (1mb)
+$ dd if=/dev/urandom of=file bs=1024 count=1000
+
+# Create 10 files of size ~10MB
+$ for a in {0..9}; do \
+    echo ${a}; \
+    dd if=/dev/urandom of=file.${a} bs=10240 count=1024; \
+  done
+```
+
 
 ## Docker
 Prune Docker unused resources
@@ -23,6 +35,23 @@ $ docker system prune
 # Remove all unused Docker images
 $ docker system prune -a
 ```
+
+Docker quit an interactive session without closing it:
+```
+# Ctrl + p + q (order is important)
+```
+Attache back to it
+```bash
+$ docker attach <container-id>
+```
+
+
+
+Allow my user to run docker commands without sudo:
+sudo usermod -aG docker <user>
+sudo usermod -aG docker vagrant
+IMPORTANT: Log out and back in after this change!
+
 
 
 ## Kubernetes
