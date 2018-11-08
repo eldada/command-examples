@@ -1,6 +1,13 @@
 # Commands examples
 This is a repository with a collection of various commands and examples I collected through times in various topics
 
+# Table of contents
+* [Linux](#linux)
+* [Docker](#docker)
+* [Kubernetes](#kubernetes)
+* [Other](#other)
+* [Contribute](#contribute)
+
 
 ## Linux
 Clear memory cache
@@ -34,20 +41,29 @@ sudo usermod -aG docker user
 # IMPORTANT: Log out and back in after this change!
 ```
 
+See what Docker is using
+```bash
+$ docker system df
+```
+
 Prune Docker unused resources
 ```bash
+# Prune system
 $ docker system prune
 
 # Remove all unused Docker images
 $ docker system prune -a
+
+# Prune only parts
+$ docker image/container/volume/network prune
 ```
 
-Docker remove dangling volumes
+Remove dangling volumes
 ```bash
 $ docker volume rm $(docker volume ls -f dangling=true -q)
 ```
 
-Docker quit an interactive session without closing it:
+Quit an interactive session without closing it:
 ```
 # Ctrl + p + q (order is important)
 ```
