@@ -5,6 +5,8 @@ This is a repository with a collection of various useful commands and examples I
 * [Linux](#linux)
 * [Docker](#docker)
 * [Kubernetes](#kubernetes)
+  * [Kubectl](#kubectl)
+  * [Helm](#helm)
 * [Other](#other)
 * [Contribute](#contribute)
 
@@ -94,6 +96,9 @@ $ docker images | grep none | awk '{print $3}' | xargs docker rmi
 ```
 
 ## Kubernetes
+
+### Kubectl
+
 Get cluster events
 ```bash
 # All cluster
@@ -138,11 +143,18 @@ $ for a in $(kubectl get pods -n jfmctests -o name); do \
   done
 ```
 
+### Helm
+
 Helm on an RBAC enabled cluster. This will give tiller `cluster-admin` role
 ```bash
 $ kubectl -n kube-system create sa tiller && \
     kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller && \
     helm init --service-account tiller
+```
+
+Debug a `helm install`. Useful for seeing the actual values resolved by helm before deploying
+```bash
+$ helm install --debug --dry-run <chart>
 ```
 
 
