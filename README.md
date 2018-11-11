@@ -1,5 +1,5 @@
 # Commands examples
-This is a repository with a collection of various commands and examples I collected through times in various topics
+This is a repository with a collection of various useful commands and examples I collected through times in various topics
 
 # Table of contents
 * [Linux](#linux)
@@ -67,7 +67,8 @@ Quit an interactive session without closing it:
 ```
 # Ctrl + p + q (order is important)
 ```
-Attache back to it
+
+Attach back to it
 ```bash
 $ docker attach <container-id>
 ```
@@ -87,6 +88,10 @@ $ screen ~/Library/Containers/com.docker.docker/Data/com.docker.driver.amd64-lin
 # Ctrl +A +D to exit
 ```
 
+Remove `none` images (usually leftover failed docker builds)
+```bash
+$ docker images | grep none | awk '{print $3}' | xargs docker rmi
+```
 
 ## Kubernetes
 Get cluster events
