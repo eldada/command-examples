@@ -81,7 +81,7 @@ Save a Docker image to be loaded in another computer
 $ docker save -o ~/the.img the-image:tag
 
 # Load into another Docker engine
-docker load -i ~/the.img
+$ docker load -i ~/the.img
 ```
 
 Connect to Docker VM on Mac
