@@ -136,11 +136,19 @@ $ kubectl top nodes
 
 Get all labels attached to all pods in a namespace
 ```bash
-$ export NS=your-namespace
-$ for a in $(kubectl get pods -n jfmctests -o name); do \
+$ for a in $(kubectl get pods -n namespace1 -o name); do \
     echo -e "\nPod ${a}"; \
-    kubectl -n jfmctests describe ${a} | awk '/Labels:/,/Annotations/' | sed '/Annotations/d'; \
+    kubectl -n namespace1 describe ${a} | awk '/Labels:/,/Annotations/' | sed '/Annotations/d'; \
   done
+```
+
+Forward local port to a pod or service
+```bash
+# Forward localhost port 8080 to a specific pod exposing port 8080
+$ kubectl port-forward -n namespace1 web 8080:8080
+
+# Forward localhost port 8080 to a specific web service exposing port 80
+$ kubectl port-forward -n namespace1 svc/web 8080:80
 ```
 
 ### Helm
