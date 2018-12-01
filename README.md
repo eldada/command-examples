@@ -172,6 +172,9 @@ $ helm install --debug --dry-run <chart>
 ### Artifactory in Kubernetes
 Examples of commands to install Artifactory in K8s with various databases.
 
+**NOTE:** If using a [Kubernetes cluster with RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) disabled, 
+must pass `--set rbac.create=false` to all Artifactory `helm install/upgrade` commands.
+
 #### Setup Helm repository 
 Add JFrog's helm repository
 ```bash
@@ -195,7 +198,7 @@ $ helm upgrade --install artifactory \
 Install Artifactory with external PostgreSQL database in K8s
 ```bash
 # Install PostgreSQL
-$ helm install --name postgresql \
+$ helm upgrade --install postgresql \
     --set postgresUser=artifactory \
     --set postgresPassword=password1 \
     --set postgresDatabase=artifactory \
@@ -225,7 +228,7 @@ $ helm upgrade --install artifactory \
 Install Artifactory with MySQL database in K8s
 ```bash
 # Install MySQL
-$ helm install --name mysql \
+$ helm upgrade --install mysql \
     --set mysqlRootPassword=rootPassword1 \
     --set mysqlUser=artifactory \
     --set mysqlPassword=password1 \
@@ -253,7 +256,6 @@ $ helm upgrade --install artifactory \
     jfrog/artifactory
 
 ```
-
 
 ## Contribute
 Contributing is more than welcome with a pull request
