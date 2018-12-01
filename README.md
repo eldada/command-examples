@@ -8,6 +8,7 @@ This is a repository with a collection of various useful commands and examples I
   * [Kubectl](#kubectl)
   * [Helm](#helm)
 * [Other](#other)
+  * [Artifactory in Kubernetes](#artifactoryinkubernetes)
 * [Contribute](#contribute)
 
 
@@ -168,7 +169,7 @@ $ helm install --debug --dry-run <chart>
 
 ## Other
 
-### Artifactory in Kubernetes (helm)
+### Artifactory in Kubernetes
 Examples of commands to install Artifactory in K8s with various databases.
 
 #### Setup Helm repository 
