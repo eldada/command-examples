@@ -8,7 +8,7 @@ This is a repository with a collection of various useful commands and examples I
   * [Kubectl](#kubectl)
   * [Helm](#helm)
 * [Other](#other)
-  * [Artifactory in Kubernetes](#artifactoryinkubernetes)
+  * [Artifactory in Kubernetes](#artifactory-in-kubernetes)
 * [Contribute](#contribute)
 
 
