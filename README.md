@@ -168,6 +168,91 @@ $ helm install --debug --dry-run <chart>
 
 ## Other
 
+### Artifactory in Kubernetes (helm)
+Examples of commands to install Artifactory in K8s with various databases.
+
+#### Setup Helm repository 
+Add JFrog's helm repository
+```bash
+$ helm repo add jfrog https://charts.jfrog.io
+```
+
+#### Default install
+Install with Artifactory's default included database PostgreSQL
+```bash
+$ helm upgrade --install artifactory jfrog/artifactory 
+```
+
+#### With embedded Derby
+Install with Artifactory's embedded database Derby
+```bash
+$ helm upgrade --install artifactory \
+    --set postgresql.enabled=false jfrog/artifactory 
+```
+
+#### With external PostgreSQL
+Install Artifactory with external PostgreSQL database in K8s
+```bash
+# Install PostgreSQL
+$ helm install --name postgresql \
+    --set postgresUser=artifactory \
+    --set postgresPassword=password1 \
+    --set postgresDatabase=artifactory \
+    stable/postgresql
+    
+# Install Artifactory (PostgreSQL driver already included in Docker image)
+$ helm upgrade --install artifactory \
+    --set postgresql.enabled=false \
+    --set database.type=postgresql \
+    --set database.user=artifactory \
+    --set database.password=password1 \
+    --set database.host=postgresql \
+    jfrog/artifactory
+
+# Install Artifactory (Using DB_URL)
+$ helm upgrade --install artifactory \
+    --set postgresql.enabled=false \
+    --set database.type=postgresql \
+    --set database.user=artifactory \
+    --set database.password=password1 \
+    --set database.url='jdbc:postgresql://postgresql:5432/artifactory' \
+    jfrog/artifactory
+
+```
+
+#### With external MySQL
+Install Artifactory with MySQL database in K8s
+```bash
+# Install MySQL
+$ helm install --name mysql \
+    --set mysqlRootPassword=rootPassword1 \
+    --set mysqlUser=artifactory \
+    --set mysqlPassword=password1 \
+    --set mysqlDatabase=artdb \
+     stable/mysql
+
+# Install Artifactory (download mysql driver before starting server)
+$ helm upgrade --install artifactory \
+    --set postgresql.enabled=false \
+    --set database.type=mysql \
+    --set database.user=artifactory \
+    --set database.password=password1 \
+    --set database.host=mysql \
+    --set artifactory.preStartCommand='curl -L -o /opt/jfrog/artifactory/tomcat/lib/mysql-connector-java-5.1.41.jar https://jcenter.bintray.com/mysql/mysql-connector-java/5.1.41/mysql-connector-java-5.1.41.jar' \
+    jfrog/artifactory
+
+# Install Artifactory (Using DB_URL)
+$ helm upgrade --install artifactory \
+    --set postgresql.enabled=false \
+    --set database.type=mysql \
+    --set database.user=artifactory \
+    --set database.password=password1 \
+    --set artifactory.preStartCommand='curl -L -o /opt/jfrog/artifactory/tomcat/lib/mysql-connector-java-5.1.41.jar https://jcenter.bintray.com/mysql/mysql-connector-java/5.1.41/mysql-connector-java-5.1.41.jar' \
+    --set database.url='url=jdbc:mysql://mysql:3306/artdb?characterEncoding=UTF-8&elideSetAutoCommits=true' \
+    jfrog/artifactory
+
+```
+
 
 ## Contribute
 Contributing is more than welcome with a pull request
