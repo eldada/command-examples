@@ -96,6 +96,16 @@ Remove `none` images (usually leftover failed docker builds)
 $ docker images | grep none | awk '{print $3}' | xargs docker rmi
 ```
 
+Using [dive](https://github.com/wagoodman/dive) to analyse a Docker image
+```bash
+# Must pull the image before analysis
+$ docker pull redis:latest
+
+# Run using dive Docker image
+$ docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock wagoodman/dive:latest redis:latest
+```
+
+
 ## Kubernetes
 
 ### Kubectl
