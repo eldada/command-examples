@@ -235,7 +235,7 @@ $ helm upgrade --install artifactory \
 ```
 
 #### With external MySQL
-Install Artifactory with MySQL database in K8s
+Install Artifactory with external MySQL database in K8s
 ```bash
 # Install MySQL
 $ helm upgrade --install mysql \
