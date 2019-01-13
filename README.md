@@ -2,6 +2,7 @@
 This is a repository with a collection of various useful commands and examples I collected through times in various topics
 
 # Table of contents
+* [Git](#git)
 * [Linux](#linux)
 * [Docker](#docker)
 * [Kubernetes](#kubernetes)
@@ -11,6 +12,34 @@ This is a repository with a collection of various useful commands and examples I
   * [Artifactory in Kubernetes](#artifactory-in-kubernetes)
 * [Contribute](#contribute)
 
+## Git
+Rebasing a branch on master
+```bash
+# Update local copy of master
+$ git checkout master
+$ git pull
+
+# Rebase the branch on the updated master
+$ git checkout my-branch
+$ git rebase master
+
+# If problems are found, follow on screen instructions to resolve and complete the rebase.
+```
+
+
+Resetting a fork with upstream. **WARNING:** This will override **any** local changes in your fork!
+```bash
+$ git remote add upstream /url/to/original/repo
+$ git fetch upstream
+$ git checkout master
+$ git reset --hard upstream/master  
+$ git push origin master --force 
+```
+
+Add `Signed-off-by` line by the committer at the end of the commit log message.
+```bash
+$ git commit -s -m "Your commit message"
+```
 
 ## Linux
 Clear memory cache
