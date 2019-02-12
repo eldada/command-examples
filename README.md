@@ -65,6 +65,13 @@ $ for a in {0..9}; do \
   done
 ```
 
+Test connection to remote `host:port` (check port being opened without using netcat or other tools)
+```bash
+# Check if port 8086 is open on remote
+bash -c "</dev/tcp/remote/8080" 2>/dev/null
+[ $? -eq 0 ] && echo "Port 8080 on host 'remote' is open"
+```
+
 
 ## Docker
 Allow a user to run docker commands without sudo
@@ -134,6 +141,12 @@ $ docker pull redis:latest
 $ docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock wagoodman/dive:latest redis:latest
 ```
 
+Adding health checks for containers that check tcp port being opened without using netcat or other tools in your image
+```bash
+# Check if port 8086 is open
+bash -c "</dev/tcp/localhost/8081" 2>/dev/null
+[ $? -eq 0 ] && echo "Port 8081 on localhost is open"
+```
 
 ## Kubernetes
 
