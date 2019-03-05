@@ -72,7 +72,13 @@ bash -c "</dev/tcp/remote/8080" 2>/dev/null
 [ $? -eq 0 ] && echo "Port 8080 on host 'remote' is open"
 ```
 
-
+Suppress `Terminated` message from the `kill` on a background process by waiting for it with `wait` and directing the stderr output to `/dev/null`. This is from in this [stackoverflow answer](https://stackoverflow.com/a/5722874/1300730).
+```bash
+# Call the kill command
+kill ${PID}
+wait $! 2>/dev/null
+```
+ 
 ## Docker
 Allow a user to run docker commands without sudo
 ```bash
