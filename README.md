@@ -16,12 +16,12 @@ This is a repository with a collection of various useful commands and examples f
 Rebasing a branch on master
 ```bash
 # Update local copy of master
-$ git checkout master
-$ git pull
+git checkout master
+git pull
 
 # Rebase the branch on the updated master
-$ git checkout my-branch
-$ git rebase master
+git checkout my-branch
+git rebase master
 
 # If problems are found, follow on screen instructions to resolve and complete the rebase.
 ```
@@ -29,28 +29,28 @@ $ git rebase master
 
 Resetting a fork with upstream. **WARNING:** This will override **any** local changes in your fork!
 ```bash
-$ git remote add upstream /url/to/original/repo
-$ git fetch upstream
-$ git checkout master
-$ git reset --hard upstream/master  
-$ git push origin master --force 
+git remote add upstream /url/to/original/repo
+git fetch upstream
+git checkout master
+git reset --hard upstream/master  
+git push origin master --force 
 ```
 
 Add `Signed-off-by` line by the committer at the end of the commit log message.
 ```bash
-$ git commit -s -m "Your commit message"
+git commit -s -m "Your commit message"
 ```
 
 ## Linux
 Clear memory cache
 ```bash
-$ sync && echo 3 | sudo tee /proc/sys/vm/drop_caches
+sync && echo 3 | sudo tee /proc/sys/vm/drop_caches
 ```
 
 Create self signed SSL key and certificate
 ```bash
-$ mkdir -p certs/my_com
-$ openssl req -nodes -x509 -newkey rsa:4096 -keyout certs/my_com/my_com.key -out certs/my_com/my_com.crt -days 356 -subj "/C=US/ST=California/L=SantaClara/O=IT/CN=localhost"
+mkdir -p certs/my_com
+openssl req -nodes -x509 -newkey rsa:4096 -keyout certs/my_com/my_com.key -out certs/my_com/my_com.crt -days 356 -subj "/C=US/ST=California/L=SantaClara/O=IT/CN=localhost"
 ```
 
 Create binary files with random content
@@ -59,10 +59,10 @@ Create binary files with random content
 $ dd if=/dev/urandom of=file bs=1024 count=1000
 
 # Create 10 files of size ~10MB
-$ for a in {0..9}; do \
-    echo ${a}; \
-    dd if=/dev/urandom of=file.${a} bs=10240 count=1024; \
-  done
+for a in {0..9}; do \
+  echo ${a}; \
+  dd if=/dev/urandom of=file.${a} bs=10240 count=1024; \
+done
 ```
 
 Test connection to remote `host:port` (check port being opened without using netcat or other tools)
@@ -88,24 +88,24 @@ sudo usermod -aG docker user
 
 See what Docker is using
 ```bash
-$ docker system df
+docker system df
 ```
 
 Prune Docker unused resources
 ```bash
 # Prune system
-$ docker system prune
+docker system prune
 
 # Remove all unused Docker images
-$ docker system prune -a
+docker system prune -a
 
 # Prune only parts
-$ docker image/container/volume/network prune
+docker image/container/volume/network prune
 ```
 
 Remove dangling volumes
 ```bash
-$ docker volume rm $(docker volume ls -f dangling=true -q)
+docker volume rm $(docker volume ls -f dangling=true -q)
 ```
 
 Quit an interactive session without closing it:
@@ -115,36 +115,36 @@ Quit an interactive session without closing it:
 
 Attach back to it
 ```bash
-$ docker attach <container-id>
+docker attach <container-id>
 ```
 
 Save a Docker image to be loaded in another computer
 ```bash
 # Save
-$ docker save -o ~/the.img the-image:tag
+docker save -o ~/the.img the-image:tag
 
 # Load into another Docker engine
-$ docker load -i ~/the.img
+docker load -i ~/the.img
 ```
 
 Connect to Docker VM on Mac
 ```bash
-$ screen ~/Library/Containers/com.docker.docker/Data/com.docker.driver.amd64-linux/tty
+screen ~/Library/Containers/com.docker.docker/Data/com.docker.driver.amd64-linux/tty
 # Ctrl +A +D to exit
 ```
 
 Remove `none` images (usually leftover failed docker builds)
 ```bash
-$ docker images | grep none | awk '{print $3}' | xargs docker rmi
+docker images | grep none | awk '{print $3}' | xargs docker rmi
 ```
 
 Using [dive](https://github.com/wagoodman/dive) to analyse a Docker image
 ```bash
 # Must pull the image before analysis
-$ docker pull redis:latest
+docker pull redis:latest
 
 # Run using dive Docker image
-$ docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock wagoodman/dive:latest redis:latest
+docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock wagoodman/dive:latest redis:latest
 ```
 
 Adding health checks for containers that check tcp port being opened without using netcat or other tools in your image
@@ -161,67 +161,67 @@ bash -c "</dev/tcp/localhost/8081" 2>/dev/null
 Get cluster events
 ```bash
 # All cluster
-$ kubectl get events
+kubectl get events
 
 # Specific namespace events
-$ kubectl get events --namespace=kube-system
+kubectl get events --namespace=kube-system
 ```
 
 Get all cluster nodes IPs and names
 ```bash
 # Single call to K8s API
-$ kubectl get nodes -o json | grep -A 12 addresses
+kubectl get nodes -o json | grep -A 12 addresses
 
 # A loop for more flexibility
-$ for n in $(kubectl get nodes -o name); do \
-    echo -e "\nNode ${n}"; \
-    kubectl get ${n} -o json | grep -A 8 addresses; \
-  done
+for n in $(kubectl get nodes -o name); do \
+  echo -e "\nNode ${n}"; \
+  kubectl get ${n} -o json | grep -A 8 addresses; \
+done
 ```
 
 See all cluster nodes CPU and Memory requests and limits
 ```bash
 # Option 1
-$ kubectl describe nodes | grep -A 2 -e "^\\s*CPU Requests"
+kubectl describe nodes | grep -A 2 -e "^\\s*CPU Requests"
 
 # Option 2 (condensed)
-$ kubectl describe nodes | grep -A 2 -e "^\\s*CPU Requests" | grep -e "%"
+kubectl describe nodes | grep -A 2 -e "^\\s*CPU Requests" | grep -e "%"
 ``` 
 
 See all custer nodes load (top)
 ```bash
-$ kubectl top nodes
+kubectl top nodes
 ```
 
 Get all labels attached to all pods in a namespace
 ```bash
-$ for a in $(kubectl get pods -n namespace1 -o name); do \
-    echo -e "\nPod ${a}"; \
-    kubectl -n namespace1 describe ${a} | awk '/Labels:/,/Annotations/' | sed '/Annotations/d'; \
-  done
+for a in $(kubectl get pods -n namespace1 -o name); do \
+  echo -e "\nPod ${a}"; \
+  kubectl -n namespace1 describe ${a} | awk '/Labels:/,/Annotations/' | sed '/Annotations/d'; \
+done
 ```
 
 Forward local port to a pod or service
 ```bash
 # Forward localhost port 8080 to a specific pod exposing port 8080
-$ kubectl port-forward -n namespace1 web 8080:8080
+kubectl port-forward -n namespace1 web 8080:8080
 
 # Forward localhost port 8080 to a specific web service exposing port 80
-$ kubectl port-forward -n namespace1 svc/web 8080:80
+kubectl port-forward -n namespace1 svc/web 8080:80
 ```
 
 ### Helm
 
 Helm on an RBAC enabled cluster. This will give tiller `cluster-admin` role
 ```bash
-$ kubectl -n kube-system create sa tiller && \
+kubectl -n kube-system create sa tiller && \
     kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller && \
     helm init --service-account tiller
 ```
 
 Debug a `helm install`. Useful for seeing the actual values resolved by helm before deploying
 ```bash
-$ helm install --debug --dry-run <chart>
+helm install --debug --dry-run <chart>
 ```
 
 
@@ -236,19 +236,19 @@ must pass `--set rbac.create=false` to all Artifactory `helm install/upgrade` co
 #### Setup Helm repository 
 Add JFrog's helm repository
 ```bash
-$ helm repo add jfrog https://charts.jfrog.io
+helm repo add jfrog https://charts.jfrog.io
 ```
 
 #### Default install
 Install with Artifactory's default included database PostgreSQL
 ```bash
-$ helm upgrade --install artifactory jfrog/artifactory 
+helm upgrade --install artifactory jfrog/artifactory 
 ```
 
 #### With embedded Derby
 Install with Artifactory's embedded database Derby
 ```bash
-$ helm upgrade --install artifactory \
+helm upgrade --install artifactory \
     --set postgresql.enabled=false jfrog/artifactory 
 ```
 
@@ -256,14 +256,14 @@ $ helm upgrade --install artifactory \
 Install Artifactory with external PostgreSQL database in K8s
 ```bash
 # Install PostgreSQL
-$ helm upgrade --install postgresql \
+helm upgrade --install postgresql \
     --set postgresUser=artifactory \
     --set postgresPassword=password1 \
     --set postgresDatabase=artifactory \
     stable/postgresql
     
 # Install Artifactory (PostgreSQL driver already included in Docker image)
-$ helm upgrade --install artifactory \
+helm upgrade --install artifactory \
     --set postgresql.enabled=false \
     --set database.type=postgresql \
     --set database.user=artifactory \
@@ -272,7 +272,7 @@ $ helm upgrade --install artifactory \
     jfrog/artifactory
 
 # Install Artifactory (Using DB_URL)
-$ helm upgrade --install artifactory \
+helm upgrade --install artifactory \
     --set postgresql.enabled=false \
     --set database.type=postgresql \
     --set database.user=artifactory \
@@ -286,7 +286,7 @@ $ helm upgrade --install artifactory \
 Install Artifactory with external MySQL database in K8s
 ```bash
 # Install MySQL
-$ helm upgrade --install mysql \
+helm upgrade --install mysql \
     --set mysqlRootPassword=rootPassword1 \
     --set mysqlUser=artifactory \
     --set mysqlPassword=password1 \
@@ -294,7 +294,7 @@ $ helm upgrade --install mysql \
      stable/mysql
 
 # Install Artifactory (download mysql driver before starting server)
-$ helm upgrade --install artifactory \
+helm upgrade --install artifactory \
     --set postgresql.enabled=false \
     --set database.type=mysql \
     --set database.user=artifactory \
@@ -304,7 +304,7 @@ $ helm upgrade --install artifactory \
     jfrog/artifactory
 
 # Install Artifactory (Using DB_URL)
-$ helm upgrade --install artifactory \
+helm upgrade --install artifactory \
     --set postgresql.enabled=false \
     --set database.type=mysql \
     --set database.user=artifactory \
