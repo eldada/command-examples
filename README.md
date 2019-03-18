@@ -1,5 +1,5 @@
 # Commands examples
-This is a repository with a collection of various useful commands and examples I collected through times in various topics
+This is a repository with a collection of various useful commands and examples for easy copy -> paste
 
 # Table of contents
 * [Git](#git)
