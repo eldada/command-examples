@@ -81,6 +81,7 @@ wait $! 2>/dev/null
 
 ### Screen
 * Full source in this [gist](https://gist.github.com/jctosta/af918e1618682638aa82)
+* `screen` [MacOS man page](https://ss64.com/osx/screen.html) and [bash man page](https://ss64.com/bash/screen.html)
 * The `screen` command quick reference
 ```bash
 # Start a new session with session name
@@ -103,6 +104,7 @@ screen -d <session_name>
 
 | Description             | Command                                 |
 |-------------------------|-----------------------------------------|
+| Exit and close session  | `Ctrl-d` or `exit`                      |
 | Detach current session  | `Ctrl-a d`                              |
 | Detach and logout (quick exit) | `Ctrl-a D D`                     |
 | Kill current window     | `Ctrl-a k`                              |
