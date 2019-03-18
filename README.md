@@ -78,7 +78,42 @@ Suppress `Terminated` message from the `kill` on a background process by waiting
 kill ${PID}
 wait $! 2>/dev/null
 ```
- 
+
+### Screen
+* Full source in this [gist](https://gist.github.com/jctosta/af918e1618682638aa82)
+* The `screen` command quick reference
+```bash
+# Start a new session with session name
+screen -S <session_name>
+
+# List running screens
+screen -ls
+
+# Attach to a running session
+screen -x
+
+# Attach to a running session with name
+screen -r <session_name>
+
+# Detach a running session
+screen -d <session_name>
+```
+
+* Screen commands are prefixed by an escape key, by default Ctrl-a (that's Control-a, sometimes written ^a). To send a literal Ctrl-a to the programs in screen, use Ctrl-a a. This is useful when when working with screen within screen. For example Ctrl-a a n will move screen to a new window on the screen within screen. 
+
+| Description             | Command                                 |
+|-------------------------|-----------------------------------------|
+| Detach current session  | `Ctrl-a d`                              |
+| Detach and logout (quick exit) | `Ctrl-a D D`                     |
+| Exit screen             | `Ctrl-a :` quit or exit all of the programs in screen|
+| Force-exit screen       | `Ctrl-a C-\` (not recommended)          |
+
+* Help
+
+| Description | Command                       |
+|-------------|-------------------------------|
+| See help    | `Ctrl-a ?` (Lists keybindings)|
+
 ## Docker
 Allow a user to run docker commands without sudo
 ```bash
