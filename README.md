@@ -105,6 +105,7 @@ screen -d <session_name>
 |-------------------------|-----------------------------------------|
 | Detach current session  | `Ctrl-a d`                              |
 | Detach and logout (quick exit) | `Ctrl-a D D`                     |
+| Kill current window     | `Ctrl-a k`                              |
 | Exit screen             | `Ctrl-a :` quit or exit all of the programs in screen|
 | Force-exit screen       | `Ctrl-a C-\` (not recommended)          |
 
