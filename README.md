@@ -4,6 +4,7 @@ This is a repository with a collection of various useful commands and examples f
 # Table of contents
 * [Git](#git)
 * [Linux](#linux)
+  * [Screen](#screen)
 * [Docker](#docker)
 * [Kubernetes](#kubernetes)
   * [Kubectl](#kubectl)
@@ -13,7 +14,7 @@ This is a repository with a collection of various useful commands and examples f
 * [Contribute](#contribute)
 
 ## Git
-Rebasing a branch on master
+* Rebasing a branch on master
 ```bash
 # Update local copy of master
 git checkout master
@@ -26,8 +27,7 @@ git rebase master
 # If problems are found, follow on screen instructions to resolve and complete the rebase.
 ```
 
-
-Resetting a fork with upstream. **WARNING:** This will override **any** local changes in your fork!
+* Resetting a fork with upstream. **WARNING:** This will override **any** local changes in your fork!
 ```bash
 git remote add upstream /url/to/original/repo
 git fetch upstream
@@ -36,24 +36,24 @@ git reset --hard upstream/master
 git push origin master --force 
 ```
 
-Add `Signed-off-by` line by the committer at the end of the commit log message.
+* Add `Signed-off-by` line by the committer at the end of the commit log message.
 ```bash
 git commit -s -m "Your commit message"
 ```
 
 ## Linux
-Clear memory cache
+* Clear memory cache
 ```bash
 sync && echo 3 | sudo tee /proc/sys/vm/drop_caches
 ```
 
-Create self signed SSL key and certificate
+* Create self signed SSL key and certificate
 ```bash
 mkdir -p certs/my_com
 openssl req -nodes -x509 -newkey rsa:4096 -keyout certs/my_com/my_com.key -out certs/my_com/my_com.crt -days 356 -subj "/C=US/ST=California/L=SantaClara/O=IT/CN=localhost"
 ```
 
-Create binary files with random content
+* Create binary files with random content
 ```bash
 # Just one file (1mb)
 $ dd if=/dev/urandom of=file bs=1024 count=1000
@@ -65,14 +65,14 @@ for a in {0..9}; do \
 done
 ```
 
-Test connection to remote `host:port` (check port being opened without using netcat or other tools)
+* Test connection to remote `host:port` (check port being opened without using netcat or other tools)
 ```bash
 # Check if port 8086 is open on remote
 bash -c "</dev/tcp/remote/8080" 2>/dev/null
 [ $? -eq 0 ] && echo "Port 8080 on host 'remote' is open"
 ```
 
-Suppress `Terminated` message from the `kill` on a background process by waiting for it with `wait` and directing the stderr output to `/dev/null`. This is from in this [stackoverflow answer](https://stackoverflow.com/a/5722874/1300730).
+* Suppress `Terminated` message from the `kill` on a background process by waiting for it with `wait` and directing the stderr output to `/dev/null`. This is from in this [stackoverflow answer](https://stackoverflow.com/a/5722874/1300730).
 ```bash
 # Call the kill command
 kill ${PID}
@@ -118,18 +118,18 @@ screen -d <session_name>
 | See help    | `Ctrl-a ?` (Lists keybindings)|
 
 ## Docker
-Allow a user to run docker commands without sudo
+* Allow a user to run docker commands without sudo
 ```bash
 sudo usermod -aG docker user
 # IMPORTANT: Log out and back in after this change!
 ```
 
-See what Docker is using
+* See what Docker is using
 ```bash
 docker system df
 ```
 
-Prune Docker unused resources
+* Prune Docker unused resources
 ```bash
 # Prune system
 docker system prune
@@ -141,22 +141,22 @@ docker system prune -a
 docker image/container/volume/network prune
 ```
 
-Remove dangling volumes
+* Remove dangling volumes
 ```bash
 docker volume rm $(docker volume ls -f dangling=true -q)
 ```
 
-Quit an interactive session without closing it:
+* Quit an interactive session without closing it:
 ```
 # Ctrl + p + q (order is important)
 ```
 
-Attach back to it
+* Attach back to it
 ```bash
 docker attach <container-id>
 ```
 
-Save a Docker image to be loaded in another computer
+* Save a Docker image to be loaded in another computer
 ```bash
 # Save
 docker save -o ~/the.img the-image:tag
@@ -165,18 +165,18 @@ docker save -o ~/the.img the-image:tag
 docker load -i ~/the.img
 ```
 
-Connect to Docker VM on Mac
+* Connect to Docker VM on Mac
 ```bash
 screen ~/Library/Containers/com.docker.docker/Data/com.docker.driver.amd64-linux/tty
 # Ctrl +A +D to exit
 ```
 
-Remove `none` images (usually leftover failed docker builds)
+* Remove `none` images (usually leftover failed docker builds)
 ```bash
 docker images | grep none | awk '{print $3}' | xargs docker rmi
 ```
 
-Using [dive](https://github.com/wagoodman/dive) to analyse a Docker image
+* Using [dive](https://github.com/wagoodman/dive) to analyse a Docker image
 ```bash
 # Must pull the image before analysis
 docker pull redis:latest
@@ -185,7 +185,7 @@ docker pull redis:latest
 docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock wagoodman/dive:latest redis:latest
 ```
 
-Adding health checks for containers that check tcp port being opened without using netcat or other tools in your image
+* Adding health checks for containers that check tcp port being opened without using netcat or other tools in your image
 ```bash
 # Check if port 8086 is open
 bash -c "</dev/tcp/localhost/8081" 2>/dev/null
@@ -261,15 +261,14 @@ kubectl get secret -n namespace1 my-postgresql -o jsonpath="{.data.postgres-pass
 
 
 ### Helm
-
-Helm on an RBAC enabled cluster. This will give tiller `cluster-admin` role
+* Helm on an RBAC enabled cluster. This will give tiller `cluster-admin` role
 ```bash
 kubectl -n kube-system create sa tiller && \
     kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller && \
     helm init --service-account tiller
 ```
 
-Debug a `helm install`. Useful for seeing the actual values resolved by helm before deploying
+* Debug a `helm install`. Useful for seeing the actual values resolved by helm before deploying
 ```bash
 helm install --debug --dry-run <chart>
 ```
