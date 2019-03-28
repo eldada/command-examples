@@ -195,8 +195,7 @@ bash -c "</dev/tcp/localhost/8081" 2>/dev/null
 ## Kubernetes
 
 ### Kubectl
-
-Get cluster events
+* Get cluster events
 ```bash
 # All cluster
 kubectl get events
@@ -205,7 +204,7 @@ kubectl get events
 kubectl get events --namespace=kube-system
 ```
 
-Get all cluster nodes IPs and names
+* Get all cluster nodes IPs and names
 ```bash
 # Single call to K8s API
 kubectl get nodes -o json | grep -A 12 addresses
@@ -217,7 +216,7 @@ for n in $(kubectl get nodes -o name); do \
 done
 ```
 
-See all cluster nodes CPU and Memory requests and limits
+* See all cluster nodes CPU and Memory requests and limits
 ```bash
 # Option 1
 kubectl describe nodes | grep -A 2 -e "^\\s*CPU Requests"
@@ -226,12 +225,12 @@ kubectl describe nodes | grep -A 2 -e "^\\s*CPU Requests"
 kubectl describe nodes | grep -A 2 -e "^\\s*CPU Requests" | grep -e "%"
 ``` 
 
-See all custer nodes load (top)
+* See all custer nodes load (top)
 ```bash
 kubectl top nodes
 ```
 
-Get all labels attached to all pods in a namespace
+* Get all labels attached to all pods in a namespace
 ```bash
 for a in $(kubectl get pods -n namespace1 -o name); do \
   echo -e "\nPod ${a}"; \
@@ -239,7 +238,7 @@ for a in $(kubectl get pods -n namespace1 -o name); do \
 done
 ```
 
-Forward local port to a pod or service
+* Forward local port to a pod or service
 ```bash
 # Forward localhost port 8080 to a specific pod exposing port 8080
 kubectl port-forward -n namespace1 web 8080:8080
@@ -247,6 +246,19 @@ kubectl port-forward -n namespace1 web 8080:8080
 # Forward localhost port 8080 to a specific web service exposing port 80
 kubectl port-forward -n namespace1 svc/web 8080:80
 ```
+
+* A great tool for port forwarding all services in a namespace + adding aliases to `/etc/hosts` is [kubefwd](https://github.com/txn2/kubefwd)
+```bash
+# Port forward all service in namespace1
+kubefwd svc -n namespace1
+```
+
+* Extract secret value
+```bash
+# Get the value of the postgresql password
+kubectl get secret -n namespace1 my-postgresql -o jsonpath="{.data.postgres-password}" | base64 --decode
+```
+
 
 ### Helm
 
