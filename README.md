@@ -349,7 +349,7 @@ helm upgrade --install artifactory \
     --set database.user=artifactory \
     --set database.password=password1 \
     --set database.host=mysql \
-    --set artifactory.preStartCommand='curl -L -o /opt/jfrog/artifactory/tomcat/lib/mysql-connector-java-5.1.41.jar https://jcenter.bintray.com/mysql/mysql-connector-java/5.1.41/mysql-connector-java-5.1.41.jar' \
+    --set artifactory.preStartCommand='wget -O /opt/jfrog/artifactory/tomcat/lib/mysql-connector-java-5.1.41.jar https://jcenter.bintray.com/mysql/mysql-connector-java/5.1.41/mysql-connector-java-5.1.41.jar' \
     jfrog/artifactory
 
 # Install Artifactory (Using DB_URL)
@@ -358,7 +358,7 @@ helm upgrade --install artifactory \
     --set database.type=mysql \
     --set database.user=artifactory \
     --set database.password=password1 \
-    --set artifactory.preStartCommand='curl -L -o /opt/jfrog/artifactory/tomcat/lib/mysql-connector-java-5.1.41.jar https://jcenter.bintray.com/mysql/mysql-connector-java/5.1.41/mysql-connector-java-5.1.41.jar' \
+    --set artifactory.preStartCommand='wget -O /opt/jfrog/artifactory/tomcat/lib/mysql-connector-java-5.1.41.jar https://jcenter.bintray.com/mysql/mysql-connector-java/5.1.41/mysql-connector-java-5.1.41.jar' \
     --set database.url='url=jdbc:mysql://mysql:3306/artdb?characterEncoding=UTF-8&elideSetAutoCommits=true' \
     jfrog/artifactory
 
