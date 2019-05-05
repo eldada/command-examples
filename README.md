@@ -364,5 +364,8 @@ helm upgrade --install artifactory \
 
 ```
 
+### Prometheus Operator
+See [prometheus-operator](prometheus-operator/prometheus-operator.md)
+
 ## Contribute
 Contributing is more than welcome with a pull request
