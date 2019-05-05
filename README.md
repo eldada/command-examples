@@ -11,6 +11,7 @@ This is a repository with a collection of various useful commands and examples f
   * [Helm](#helm)
 * [Other](#other)
   * [Artifactory in Kubernetes](#artifactory-in-kubernetes)
+  * [Prometheus Operator](#prometheus-operator)
 * [Contribute](#contribute)
 
 ## Git
@@ -365,7 +366,7 @@ helm upgrade --install artifactory \
 ```
 
 ### Prometheus Operator
-See [prometheus-operator](prometheus-operator/prometheus-operator.md)
+See [prometheus-operator](prometheus-operator/README.md)
 
 ## Contribute
 Contributing is more than welcome with a pull request
