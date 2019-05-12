@@ -248,7 +248,7 @@ kubectl port-forward -n namespace1 web 8080:8080
 kubectl port-forward -n namespace1 svc/web 8080:80
 ```
 
-* A great tool for port forwarding all services in a namespace + adding aliases to `/etc/hosts` is [kubefwd](https://github.com/txn2/kubefwd)
+* A great tool for port forwarding all services in a namespace + adding aliases to `/etc/hosts` is [kubefwd](https://github.com/txn2/kubefwd). Note that this requires root or sudo to allow editing of `/etc/host`.
 ```bash
 # Port forward all service in namespace1
 kubefwd svc -n namespace1
