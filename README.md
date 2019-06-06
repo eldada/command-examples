@@ -260,6 +260,15 @@ kubefwd svc -n namespace1
 kubectl get secret -n namespace1 my-postgresql -o jsonpath="{.data.postgres-password}" | base64 --decode
 ```
 
+* Start a single busybox pod running `sleep 3600`. Good for debugging
+```bash
+# Deploy the pod
+kubectl apply -f https://k8s.io/examples/admin/dns/busybox.yaml
+
+# Open shell into the pod (once running)
+kubectl exec -it busybox sh
+```
+
 
 ### Helm
 * Helm on an RBAC enabled cluster. This will give tiller `cluster-admin` role
