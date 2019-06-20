@@ -269,6 +269,12 @@ kubectl apply -f https://k8s.io/examples/admin/dns/busybox.yaml
 kubectl exec -it busybox sh
 ```
 
+* Check if pod is really ready using output from `kubectl get pods` with a simple [podReady.sh](scripts/podReady.sh) script.<br>
+Returns 0 if pod is ready. 1 if not.
+```bash
+# Pass pod name and namespace. Namespace optional - will default to 'default'
+./podReady pod [namespace1]
+```
 
 ### Helm
 * Helm on an RBAC enabled cluster. This will give tiller `cluster-admin` role
