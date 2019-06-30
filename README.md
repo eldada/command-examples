@@ -193,6 +193,11 @@ bash -c "</dev/tcp/localhost/8081" 2>/dev/null
 [ $? -eq 0 ] && echo "Port 8081 on localhost is open"
 ```
 
+### Tools
+A collection of useful Docker tools
+* A simple terminal UI for docker and docker-compose: [lazydocker](https://github.com/jesseduffield/lazydocker)
+* Analyse a Docker image with [dive](https://github.com/wagoodman/dive)
+
 ## Kubernetes
 
 ### Kubectl
