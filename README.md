@@ -81,6 +81,21 @@ kill ${PID}
 wait $! 2>/dev/null
 ```
 
+* Single binary `curl`
+```bash
+# Get the archive from web or with wget
+wget -O curl.tar.bz2 http://www.magicermine.com/demos/curl/curl/curl-7.30.0.ermine.tar.bz2
+
+# Extract (notice the xjf parameter to tar)
+tar xjf curl.tar.bz2
+
+# Rename file (optional):
+cp curl-7.30.0.ermine/curl.ermine curl
+
+# Enjoy curl as before....
+./curl --help
+```
+
 ### Screen
 * Full source in this [gist](https://gist.github.com/jctosta/af918e1618682638aa82)
 * `screen` [MacOS man page](https://ss64.com/osx/screen.html) and [bash man page](https://ss64.com/bash/screen.html)
