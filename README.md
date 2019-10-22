@@ -298,9 +298,13 @@ Returns 0 if pod is ready. 1 if not.
 ./podReady pod [namespace1]
 ```
 
-* Start an Ubuntu bash shell in a pod
+* Start an bash shell in a pod
 ```bash
+# Ubuntu
 kubectl run my-ubuntu --rm -i -t --image ubuntu -- bash
+
+# CentOS
+kubectl run my-centos --rm -i -t --image centos:8 -- bash
 ```
 
 ### Helm
