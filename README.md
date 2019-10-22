@@ -298,6 +298,11 @@ Returns 0 if pod is ready. 1 if not.
 ./podReady pod [namespace1]
 ```
 
+* Start an Ubuntu bash shell in a pod
+```bash
+kubectl run my-ubuntu --rm -i -t --image ubuntu -- bash
+```
+
 ### Helm
 * Helm on an RBAC enabled cluster. This will give tiller `cluster-admin` role
 ```bash
