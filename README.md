@@ -96,6 +96,9 @@ cp curl-7.30.0.ermine/curl.ermine curl
 ./curl --help
 ```
 
+* Poor man's `top`
+In cases where `top` is not installed, use the [following script](scripts/top.sh) to get CPU and memory usage by processes on current host. Also useful in Docker containers (Linux based)
+
 ### Screen
 * Full source in this [gist](https://gist.github.com/jctosta/af918e1618682638aa82)
 * `screen` [MacOS man page](https://ss64.com/osx/screen.html) and [bash man page](https://ss64.com/bash/screen.html)
