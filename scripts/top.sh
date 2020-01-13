@@ -3,7 +3,7 @@
 PROC_DATA=.proc-data
 SCRIPT_NAME=$0
 HEADERS=true
-RATE=2
+RATE=5
 
 hertz=$(getconf CLK_TCK)
 command=
@@ -26,14 +26,14 @@ Usage: ${SCRIPT_NAME} <options>
 
 -p | --pid <process id>                : Show data for provided process if only.    Default: all processes
 -o | --once                            : Output once.                               Default: infinit loop
--r | --rate                            : Refresh rate (seconds).                    Default: 2
+-r | --rate                            : Refresh rate (seconds).                    Default: 5
 -h | --help                            : Show this usage.
 --no-headers                           : Don't print headers line.
 
 Examples:
 ========
 Show all:                              $ ${SCRIPT_NAME}
-Show all (refresh rate 5 seconds):     $ ${SCRIPT_NAME} --rate 5
+Show all (refresh rate 10 seconds):    $ ${SCRIPT_NAME} --rate 10
 Show once:                             $ ${SCRIPT_NAME} --once
 Show for single pid:                   $ ${SCRIPT_NAME} --pid 1234
 
@@ -105,6 +105,8 @@ getMemory () {
 # The main loop
 main () {
     processOptions $*
+    local total_cpu=0
+    local total_memory=0
 
     while true; do
         echo '' > ${PROC_DATA} || errorExit "Failed writing ${PROC_DATA}"
@@ -116,6 +118,10 @@ main () {
             # shellcheck disable=SC2010
             pid_array=$(ls /proc | grep -E '^[0-9]+$')
         fi
+
+        total_cpu=0
+        total_memory=0
+
         for p in $pid_array; do
             if [ -f /proc/$p/stat ]; then
                 PID=$p
@@ -124,6 +130,8 @@ main () {
                 getMemory
 
                 printf "%-7d %-20s %-10.2f %-10.2f\n" $p $command $cpu_usage $memory_mb >> ${PROC_DATA}
+                total_cpu=$(awk 'BEGIN {print ( '$total_cpu' + '$cpu_usage')}')
+                total_memory=$(awk 'BEGIN {print ( '$total_memory' + '$memory_mb')}')
             fi
         done
 
@@ -132,6 +140,8 @@ main () {
             printf "%-7s %-20s %-10s %-10s\n" "PID" "COMMAND" "%CPU" "MEM (MB)"
         fi
         sort -n -k1 ${PROC_DATA} | head -50
+        echo "---------------------------------------------"
+        printf "%-7s %-20s %-10.2f %-10.2f\n" "-" "-" $total_cpu $total_memory
 
         [ -n "${ONCE}" ] && break
         sleep ${RATE}
