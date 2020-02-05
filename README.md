@@ -67,7 +67,7 @@ for a in {0..9}; do \
 done
 ```
 
-* Test connection to remote `host:port` (check port being opened without using netcat or other tools)
+* Test connection to remote `host:port` (check port being opened without using `netcat` or other tools)
 ```bash
 # Check if port 8080 is open on remote
 bash -c "</dev/tcp/remote/8080" 2>/dev/null
@@ -79,6 +79,17 @@ bash -c "</dev/tcp/remote/8080" 2>/dev/null
 # Call the kill command
 kill ${PID}
 wait $! 2>/dev/null
+```
+
+* **curl** variables<br>
+The `curl` command has the ability to provide a lot of information about the transfer. See [curl man page](https://curl.haxx.se/docs/manpage.html). Search for `--write-out`.<br>
+See all supported variables in [curl.format.txt](files/curl.format.txt)
+```bash
+# Example for getting http response code (variable http_code)
+curl -o /dev/null -s --write-out '%{http_code}' https://curl.haxx.se
+
+# Example for printing all variables and their values by using an external file with the format
+curl -o /dev/null -s --write-out '@files/curl.format.txt' https://curl.haxx.se
 ```
 
 * Single binary `curl`
