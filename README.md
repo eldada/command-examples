@@ -82,7 +82,8 @@ wait $! 2>/dev/null
 ```
 
 * **curl** variables<br>
-The `curl` command has the ability to provide a lot of information about the transfer. See [curl man page](https://curl.haxx.se/docs/manpage.html). Search for `--write-out`.<br>
+The `curl` command has the ability to provide a lot of information about the transfer. See [curl man page](https://curl.haxx.se/docs/manpage.html).<br>
+Search for `--write-out`.<br>
 See all supported variables in [curl.format.txt](files/curl.format.txt)
 ```bash
 # Example for getting http response code (variable http_code)
