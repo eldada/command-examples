@@ -58,7 +58,7 @@ openssl req -nodes -x509 -newkey rsa:4096 -keyout certs/my_com/my_com.key -out c
 * Create binary files with random content
 ```bash
 # Just one file (1mb)
-$ dd if=/dev/urandom of=file bs=1024 count=1000
+dd if=/dev/urandom of=file bs=1024 count=1000
 
 # Create 10 files of size ~10MB
 for a in {0..9}; do \
