@@ -5,6 +5,7 @@ This is a repository with a collection of various useful commands and examples f
 * [Git](#git)
 * [Linux](#linux)
   * [Screen](#screen)
+  * [Sysbench](#sysbench)
 * [Docker](#docker)
   * [Tools](#tools)
 * [Kubernetes](#kubernetes)
@@ -148,6 +149,27 @@ screen -d <session_name>
 | Description | Command                       |
 |-------------|-------------------------------|
 | See help    | `Ctrl-a ?` (Lists keybindings)|
+
+### Sysbench
+**Sysbench** is a mutli-purpose benchmark that features tests for CPU, memory, I/O, and even database performance testing.<br>
+See full content for this section in [linuxconfig.org's how to benchmark your linux system](linuxconfig.org/how-to-benchmark-your-linux-system#h7-sysbench).
+
+* Installation (Debian/Ubuntu)
+```bash
+sudo apt install sysbench
+```
+* CPU benchmark
+```bash
+sysbench --test=cpu run
+```
+* Memory benchmark
+```bash
+sysbench --test=memory run
+```
+* I/O benchmark
+```bash
+sysbench --test=fileio --file-test-mode=seqwr run
+```
 
 ## Docker
 * Allow a user to run docker commands without sudo
