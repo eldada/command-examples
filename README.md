@@ -251,7 +251,7 @@ A collection of useful Docker tools
 * Analyse a Docker image with [dive](https://github.com/wagoodman/dive)
 
 ## Kubernetes
-Kubernetes commands and scripts where moved to my [Kubernetes-scripts]() repository
+Kubernetes commands and scripts where moved to my [Kubernetes-scripts](https://github.com/eldada/kubernetes-scripts) repository
 
 ## Other
 
