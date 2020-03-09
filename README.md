@@ -94,17 +94,17 @@ curl -o /dev/null -s --write-out '@files/curl.format.txt' https://curl.haxx.se
 
 * Single binary `curl`
 ```bash
-# Get the archive from web or with wget
-wget -O curl.tar.bz2 http://www.magicermine.com/demos/curl/curl/curl-7.30.0.ermine.tar.bz2
+# Get the archive, extract (notice the xjf parameter to tar) and copy.
+wget -O curl.tar.bz2 http://www.magicermine.com/demos/curl/curl/curl-7.30.0.ermine.tar.bz2 && \
+    tar xjf curl.tar.bz2 && \
+    cp curl-7.30.0.ermine/curl.ermine curl && \
+    ./curl --help
+```
 
-# Extract (notice the xjf parameter to tar)
-tar xjf curl.tar.bz2
-
-# Rename file (optional):
-cp curl-7.30.0.ermine/curl.ermine curl
-
-# Enjoy curl as before....
-./curl --help
+* Get **http code** using **wget** (without **curl**)<br>
+In cases where **curl** is not available, use **wget** to get the http code returned from an HTTP endpoint
+```shell script
+wget --spider -S -T 2 www.jfrog.org 2>&1 | grep "^  HTTP/" | awk '{print $2}' | tail -1
 ```
 
 * Poor man's `top` shell script<br>
