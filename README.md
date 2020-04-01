@@ -6,6 +6,7 @@ This is a repository with a collection of various useful commands and examples f
 * [Linux](#linux)
   * [Screen](#screen)
   * [Sysbench](#sysbench)
+  * [Apache Bench](#apache-bench)
 * [Docker](#docker)
   * [Tools](#tools)
 * [Kubernetes](#kubernetes)
@@ -16,7 +17,7 @@ This is a repository with a collection of various useful commands and examples f
 
 ## Git
 * Rebasing a branch on master
-```bash
+```shell script
 # Update local copy of master
 git checkout master
 git pull
@@ -29,7 +30,7 @@ git rebase master
 ```
 
 * Resetting a fork with upstream. **WARNING:** This will override **any** local changes in your fork!
-```bash
+```shell script
 git remote add upstream /url/to/original/repo
 git fetch upstream
 git checkout master
@@ -38,24 +39,24 @@ git push origin master --force
 ```
 
 * Add `Signed-off-by` line by the committer at the end of the commit log message.
-```bash
+```shell script
 git commit -s -m "Your commit message"
 ```
 
 ## Linux
 * Clear memory cache
-```bash
+```shell script
 sync && echo 3 | sudo tee /proc/sys/vm/drop_caches
 ```
 
 * Create self signed SSL key and certificate
-```bash
+```shell script
 mkdir -p certs/my_com
 openssl req -nodes -x509 -newkey rsa:4096 -keyout certs/my_com/my_com.key -out certs/my_com/my_com.crt -days 356 -subj "/C=US/ST=California/L=SantaClara/O=IT/CN=localhost"
 ```
 
 * Create binary files with random content
-```bash
+```shell script
 # Just one file (1mb)
 dd if=/dev/urandom of=file bs=1024 count=1000
 
@@ -67,14 +68,14 @@ done
 ```
 
 * Test connection to remote `host:port` (check port being opened without using `netcat` or other tools)
-```bash
+```shell script
 # Check if port 8080 is open on remote
 bash -c "</dev/tcp/remote/8080" 2>/dev/null
 [ $? -eq 0 ] && echo "Port 8080 on host 'remote' is open"
 ```
 
 * Suppress `Terminated` message from the `kill` on a background process by waiting for it with `wait` and directing the stderr output to `/dev/null`. This is from in this [stackoverflow answer](https://stackoverflow.com/a/5722874/1300730).
-```bash
+```shell script
 # Call the kill command
 kill ${PID}
 wait $! 2>/dev/null
@@ -84,7 +85,7 @@ wait $! 2>/dev/null
 The `curl` command has the ability to provide a lot of information about the transfer. See [curl man page](https://curl.haxx.se/docs/manpage.html).<br>
 Search for `--write-out`.<br>
 See all supported variables in [curl.format.txt](files/curl.format.txt)
-```bash
+```shell script
 # Example for getting http response code (variable http_code)
 curl -o /dev/null -s --write-out '%{http_code}' https://curl.haxx.se
 
@@ -93,7 +94,7 @@ curl -o /dev/null -s --write-out '@files/curl.format.txt' https://curl.haxx.se
 ```
 
 * Single binary `curl`
-```bash
+```shell script
 # Get the archive, extract (notice the xjf parameter to tar) and copy.
 wget -O curl.tar.bz2 http://www.magicermine.com/demos/curl/curl/curl-7.30.0.ermine.tar.bz2 && \
     tar xjf curl.tar.bz2 && \
@@ -114,7 +115,7 @@ In cases where `top` is not installed, use the [following script](scripts/top.sh
 * Full source in this [gist](https://gist.github.com/jctosta/af918e1618682638aa82)
 * `screen` [MacOS man page](https://ss64.com/osx/screen.html) and [bash man page](https://ss64.com/bash/screen.html)
 * The `screen` command quick reference
-```bash
+```shell script
 # Start a new session with session name
 screen -S <session_name>
 
@@ -153,36 +154,44 @@ screen -d <session_name>
 See full content for this section in [linuxconfig.org's how to benchmark your linux system](linuxconfig.org/how-to-benchmark-your-linux-system#h7-sysbench).
 
 * Installation (Debian/Ubuntu)
-```bash
+```shell script
 sudo apt install sysbench
 ```
 * CPU benchmark
-```bash
+```shell script
 sysbench --test=cpu run
 ```
 * Memory benchmark
-```bash
+```shell script
 sysbench --test=memory run
 ```
 * I/O benchmark
-```bash
+```shell script
 sysbench --test=fileio --file-test-mode=seqwr run
+```
+
+### Apache Bench
+From the [Apache HTTP server benchmarking tool](http://httpd.apache.org/docs/2.4/programs/ab.html) page: "`ab` is a tool for benchmarking your Apache Hypertext Transfer Protocol (HTTP) server."
+
+```shell script
+# A simple benchmarking of a web server. Running 100 requests with up to 10 concurrent requests
+ab -n 100 -c 10 http://www.jfrog.com/
 ```
 
 ## Docker
 * Allow a user to run docker commands without sudo
-```bash
+```shell script
 sudo usermod -aG docker user
 # IMPORTANT: Log out and back in after this change!
 ```
 
 * See what Docker is using
-```bash
+```shell script
 docker system df
 ```
 
 * Prune Docker unused resources
-```bash
+```shell script
 # Prune system
 docker system prune
 
@@ -194,7 +203,7 @@ docker image/container/volume/network prune
 ```
 
 * Remove dangling volumes
-```bash
+```shell script
 docker volume rm $(docker volume ls -f dangling=true -q)
 ```
 
@@ -204,12 +213,12 @@ docker volume rm $(docker volume ls -f dangling=true -q)
 ```
 
 * Attach back to it
-```bash
+```shell script
 docker attach <container-id>
 ```
 
 * Save a Docker image to be loaded in another computer
-```bash
+```shell script
 # Save
 docker save -o ~/the.img the-image:tag
 
@@ -218,18 +227,18 @@ docker load -i ~/the.img
 ```
 
 * Connect to Docker VM on Mac
-```bash
+```shell script
 screen ~/Library/Containers/com.docker.docker/Data/com.docker.driver.amd64-linux/tty
 # Ctrl +A +D to exit
 ```
 
 * Remove `none` images (usually leftover failed docker builds)
-```bash
+```shell script
 docker images | grep none | awk '{print $3}' | xargs docker rmi
 ```
 
 * Using [dive](https://github.com/wagoodman/dive) to analyse a Docker image
-```bash
+```shell script
 # Must pull the image before analysis
 docker pull redis:latest
 
@@ -238,7 +247,7 @@ docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock wagoodman/dive:
 ```
 
 * Adding health checks for containers that check tcp port being opened without using netcat or other tools in your image
-```bash
+```shell script
 # Check if port 8086 is open
 bash -c "</dev/tcp/localhost/8081" 2>/dev/null
 [ $? -eq 0 ] && echo "Port 8081 on localhost is open"
@@ -263,26 +272,26 @@ must pass `--set rbac.create=false` to all Artifactory `helm install/upgrade` co
 
 #### Setup Helm repository 
 Add JFrog's helm repository
-```bash
+```shell script
 helm repo add jfrog https://charts.jfrog.io
 ```
 
 #### Default install
 Install with Artifactory's default included database PostgreSQL
-```bash
+```shell script
 helm upgrade --install artifactory jfrog/artifactory 
 ```
 
 #### With embedded Derby
 Install with Artifactory's embedded database Derby
-```bash
+```shell script
 helm upgrade --install artifactory \
     --set postgresql.enabled=false jfrog/artifactory 
 ```
 
 #### With external PostgreSQL
 Install Artifactory with external PostgreSQL database in K8s
-```bash
+```shell script
 # Install PostgreSQL
 helm upgrade --install postgresql \
     --set postgresUser=artifactory \
@@ -312,7 +321,7 @@ helm upgrade --install artifactory \
 
 #### With external MySQL
 Install Artifactory with external MySQL database in K8s
-```bash
+```shell script
 # Install MySQL
 helm upgrade --install mysql \
     --set mysqlRootPassword=rootPassword1 \
