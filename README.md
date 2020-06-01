@@ -248,7 +248,7 @@ docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock wagoodman/dive:
 
 * Adding health checks for containers that check tcp port being opened without using netcat or other tools in your image
 ```shell script
-# Check if port 8086 is open
+# Check if port 8081 is open
 bash -c "</dev/tcp/localhost/8081" 2>/dev/null
 [ $? -eq 0 ] && echo "Port 8081 on localhost is open"
 ```
