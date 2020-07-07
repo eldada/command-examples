@@ -26,6 +26,9 @@ git pull
 git checkout my-branch
 git rebase master
 
+# Rebase and squash
+git rebase master -i
+
 # If problems are found, follow on screen instructions to resolve and complete the rebase.
 ```
 
