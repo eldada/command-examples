@@ -274,22 +274,22 @@ Examples of commands to install Artifactory in K8s with various databases.
 must pass `--set rbac.create=false` to all Artifactory `helm install/upgrade` commands.
 
 #### Setup Helm repository 
-Add JFrog's helm repository
+Add JFrog's [Chart-Center](https://chartcenter.io/bitnami/postgresql) helm repository
 ```shell script
-helm repo add jfrog https://charts.jfrog.io
+helm repo add center https://repo.chartcenter.io
 ```
 
 #### Default install
 Install with Artifactory's default included database PostgreSQL
 ```shell script
-helm upgrade --install artifactory jfrog/artifactory 
+helm upgrade --install artifactory center/jfrog/artifactory 
 ```
 
 #### With embedded Derby
 Install with Artifactory's embedded database Derby
 ```shell script
 helm upgrade --install artifactory \
-    --set postgresql.enabled=false jfrog/artifactory 
+    --set postgresql.enabled=false center/jfrog/artifactory 
 ```
 
 #### With external PostgreSQL
@@ -297,28 +297,24 @@ Install Artifactory with external PostgreSQL database in K8s
 ```shell script
 # Install PostgreSQL
 helm upgrade --install postgresql \
-    --set postgresUser=artifactory \
-    --set postgresPassword=password1 \
-    --set postgresDatabase=artifactory \
-    stable/postgresql
-    
+    --set postgresqlUsername=artifactory \
+    --set postgresqlDatabase=artifactory \
+    --set postgresqlPassword=password1 \
+    center/bitnami/postgresql
+
 # Install Artifactory (PostgreSQL driver already included in Docker image)
 helm upgrade --install artifactory \
     --set postgresql.enabled=false \
     --set database.type=postgresql \
-    --set database.user=artifactory \
-    --set database.password=password1 \
-    --set database.host=postgresql \
-    jfrog/artifactory
-
-# Install Artifactory (Using DB_URL)
-helm upgrade --install artifactory \
-    --set postgresql.enabled=false \
-    --set database.type=postgresql \
+    --set database.driver=org.postgresql.Driver \
     --set database.user=artifactory \
     --set database.password=password1 \
     --set database.url='jdbc:postgresql://postgresql:5432/artifactory' \
-    jfrog/artifactory
+    center/jfrog/artifactory
+
+# You can open a client container to this database with
+kubectl run postgresql-client --rm --tty -i --restart='Never' --namespace default --image docker.io/bitnami/postgresql:11.8.0-debian-10-r57 \
+    --env="PGPASSWORD=password1" --labels="postgresql-client=true" --command -- psql --host postgresql -U artifactory
 
 ```
 
@@ -331,27 +327,18 @@ helm upgrade --install mysql \
     --set mysqlUser=artifactory \
     --set mysqlPassword=password1 \
     --set mysqlDatabase=artdb \
-     stable/mysql
+     center/stable/mysql
 
-# Install Artifactory (download mysql driver before starting server)
+# Install Artifactory
 helm upgrade --install artifactory \
     --set postgresql.enabled=false \
     --set database.type=mysql \
+    --set database.driver=com.mysql.jdbc.Driver \
     --set database.user=artifactory \
     --set database.password=password1 \
-    --set database.host=mysql \
-    --set artifactory.preStartCommand='wget -O /opt/jfrog/artifactory/tomcat/lib/mysql-connector-java-5.1.41.jar https://jcenter.bintray.com/mysql/mysql-connector-java/5.1.41/mysql-connector-java-5.1.41.jar' \
-    jfrog/artifactory
-
-# Install Artifactory (Using DB_URL)
-helm upgrade --install artifactory \
-    --set postgresql.enabled=false \
-    --set database.type=mysql \
-    --set database.user=artifactory \
-    --set database.password=password1 \
-    --set artifactory.preStartCommand='wget -O /opt/jfrog/artifactory/tomcat/lib/mysql-connector-java-5.1.41.jar https://jcenter.bintray.com/mysql/mysql-connector-java/5.1.41/mysql-connector-java-5.1.41.jar' \
-    --set database.url='url=jdbc:mysql://mysql:3306/artdb?characterEncoding=UTF-8&elideSetAutoCommits=true' \
-    jfrog/artifactory
+    --set database.url='jdbc:mysql://mysql:3306/artdb?characterEncoding=UTF-8&elideSetAutoCommits=true' \
+    --set artifactory.preStartCommand='mkdir -pv /opt/jfrog/artifactory/var/bootstrap/artifactory/tomcat/lib; wget -O /opt/jfrog/artifactory/var/bootstrap/artifactory/tomcat/lib/mysql-connector-java-5.1.41.jar https://jcenter.bintray.com/mysql/mysql-connector-java/5.1.41/mysql-connector-java-5.1.41.jar' \
+    center/jfrog/artifactory
 
 ```
 
