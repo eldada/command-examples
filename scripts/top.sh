@@ -57,6 +57,8 @@ processOptions () {
             ;;
             -r | --rate)
                 RATE=$2
+                [ ${RATE} -eq ${RATE} ] 2> /dev/null || errorExit "Refresh rate must be an integer"
+                [ ${RATE} -gt 0 ] 2> /dev/null || errorExit "Refresh rate must be an integer higher than 0"
                 shift 2
             ;;
             --no-headers)
@@ -104,7 +106,7 @@ getMemory () {
 
 # The main loop
 main () {
-    processOptions $*
+    processOptions "$@"
     local total_cpu=0
     local total_memory=0
 
@@ -138,14 +140,19 @@ main () {
         clear
         if [ "${HEADERS}" == true ]; then
             printf "%-7s %-20s %-10s %-10s\n" "PID" "COMMAND" "%CPU" "MEM (MB)"
+            echo -n "-----------------------------------------------"
         fi
         sort -n -k1 ${PROC_DATA} | head -50
-        echo "---------------------------------------------"
+        echo "-----------------------------------------------"
         printf "%-7s %-20s %-10.2f %-10.2f\n" "-" "-" $total_cpu $total_memory
 
         [ -n "${ONCE}" ] && break
-        sleep ${RATE}
+        read -s -n 1 -t ${RATE} input
+        if [[ $input = "q" ]] || [[ $input = "Q" ]]; then
+            echo
+            break
+        fi
     done
 }
 
-main $*
+main "$@"
