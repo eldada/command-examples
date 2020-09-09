@@ -1,6 +1,7 @@
 #!/bin/bash
 
-PROC_DATA=.proc-data
+PROC_DIR=/proc
+PROC_DATA=/tmp/.proc-data
 SCRIPT_NAME=$0
 HEADERS=true
 RATE=5
@@ -25,8 +26,9 @@ ${SCRIPT_NAME} - Show resources usage per processes ("simple" top)
 Usage: ${SCRIPT_NAME} <options>
 
 -p | --pid <process id>                : Show data for provided process if only.    Default: all processes
--o | --once                            : Output once.                               Default: infinit loop
+-o | --once                            : Output once.                               Default: infinite loop
 -r | --rate                            : Refresh rate (seconds).                    Default: 5
+-d | --dir | --directory <directory>   : Use custom /proc directory                 Default: /proc
 -h | --help                            : Show this usage.
 --no-headers                           : Don't print headers line.
 
@@ -61,6 +63,10 @@ processOptions () {
                 [ ${RATE} -gt 0 ] 2> /dev/null || errorExit "Refresh rate must be an integer higher than 0"
                 shift 2
             ;;
+            -d | --dir | --directory)
+                PROC_DIR="$2"
+                shift 2
+            ;;
             --no-headers)
                 HEADERS=false
                 shift 1
@@ -77,14 +83,14 @@ processOptions () {
 }
 
 getCommand () {
-     command=$(cat /proc/${PID}/comm)
+     command=$(cat ${PROC_DIR}/${PID}/comm)
 }
 
 getCpu () {
-    uptime_array=($(cat /proc/uptime))
+    uptime_array=($(cat ${PROC_DIR}/uptime))
     uptime=${uptime_array[0]}
 
-    stat_array=($(cat /proc/${PID}/stat))
+    stat_array=($(cat ${PROC_DIR}/${PID}/stat))
 
     utime=${stat_array[13]}
     stime=${stat_array[14]}
@@ -100,7 +106,7 @@ getCpu () {
 }
 
 getMemory () {
-    memory_rss=$(grep 'VmRSS:' /proc/${PID}/status | awk '{print $2}')
+    memory_rss=$(grep 'VmRSS:' ${PROC_DIR}/${PID}/status | awk '{print $2}')
     memory_mb=$(awk 'BEGIN {print ( '$memory_rss' / 1024 )}')
 }
 
@@ -118,14 +124,14 @@ main () {
             pid_array="${PID}"
         else
             # shellcheck disable=SC2010
-            pid_array=$(ls /proc | grep -E '^[0-9]+$')
+            pid_array=$(ls ${PROC_DIR} | grep -E '^[0-9]+$')
         fi
 
         total_cpu=0
         total_memory=0
 
         for p in $pid_array; do
-            if [ -f /proc/$p/stat ]; then
+            if [ -f ${PROC_DIR}/$p/stat ]; then
                 PID=$p
                 getCommand
                 getCpu
