@@ -157,7 +157,7 @@ screen -d <session_name>
 
 ### Sysbench
 **Sysbench** is a mutli-purpose benchmark that features tests for CPU, memory, I/O, and even database performance testing.<br>
-See full content for this section in [linuxconfig.org's how to benchmark your linux system](linuxconfig.org/how-to-benchmark-your-linux-system#h7-sysbench).
+See full content for this section in [linuxconfig.org's how to benchmark your linux system](https://linuxconfig.org/how-to-benchmark-your-linux-system#h7-sysbench).
 
 * Installation (Debian/Ubuntu)
 ```shell script
