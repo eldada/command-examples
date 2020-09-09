@@ -111,8 +111,11 @@ In cases where **curl** is not available, use **wget** to get the http code retu
 wget --spider -S -T 2 www.jfrog.org 2>&1 | grep "^  HTTP/" | awk '{print $2}' | tail -1
 ```
 
-* Poor man's `top` shell script<br>
-In cases where `top` is not installed, use the [following script](scripts/top.sh) to get CPU and memory usage by processes on current host. Also useful in Docker containers (Linux based)
+* Poor man's `top` shell script (in Linux only!)<br>
+In cases where `top` is not installed, use the [special top script](scripts/top.sh) to get CPU and memory usage by processes on current host. Also useful in Docker containers (Linux based)
+
+* Process info (in Linux only!)<br>
+To get process info using its PID or search string: Command line, environment variables. Use [procInfo.sh](scripts/procInfo.sh).
 
 ### Screen
 * Full source in this [gist](https://gist.github.com/jctosta/af918e1618682638aa82)
