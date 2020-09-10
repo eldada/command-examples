@@ -143,7 +143,8 @@ main () {
             fi
         done
 
-        clear
+        [ -z "${ONCE}" ] && clear # Don't clear screen if it's only once
+
         if [ "${HEADERS}" == true ]; then
             printf "%-7s %-20s %-10s %-10s\n" "PID" "COMMAND" "%CPU" "MEM (MB)"
             echo -n "-----------------------------------------------"
