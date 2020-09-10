@@ -151,7 +151,7 @@ main () {
         fi
         sort -n -k1 ${PROC_DATA} | head -50
         echo "-----------------------------------------------"
-        printf "%-7s %-20s %-10.2f %-10.2f\n" "-" "-" $total_cpu $total_memory
+        printf "%-7s %-20s %-10.2f %-10.2f\n" "Total" "-" $total_cpu $total_memory
 
         [ -n "${ONCE}" ] && break
         read -s -n 1 -t ${RATE} input
