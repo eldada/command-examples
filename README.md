@@ -92,7 +92,7 @@ The `/proc` file system has all the information about the running processes
 * Get a process command line (see usage in [procInfo.sh](scripts/procInfo.sh))
 ```shell script
 # Assume PID is the process ID you are looking at
-cat /proc/${PID}/cmdline | tr '\0' ''
+cat /proc/${PID}/cmdline | tr '\0' ' '
 ```
 
 * Get a process environment variables (see usage in [procInfo.sh](scripts/procInfo.sh))
