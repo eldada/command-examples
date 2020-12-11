@@ -2,48 +2,17 @@
 This is a repository with a collection of various useful commands and examples for easy copy -> paste
 
 # Table of contents
-* [Git](#git)
 * [Linux](#linux)
   * [Screen](#screen)
   * [Sysbench](#sysbench)
   * [Apache Bench](#apache-bench)
+* [Git](#git)
 * [Docker](#docker)
   * [Tools](#tools)
 * [Kubernetes](#kubernetes)
 * [Other](#other)
   * [Artifactory in Kubernetes](#artifactory-in-kubernetes)
 * [Contribute](#contribute)
-
-## Git
-* Rebasing a branch on master
-```shell script
-# Update local copy of master
-git checkout master
-git pull
-
-# Rebase the branch on the updated master
-git checkout my-branch
-git rebase master
-
-# Rebase and squash
-git rebase master -i
-
-# If problems are found, follow on screen instructions to resolve and complete the rebase.
-```
-
-* Resetting a fork with upstream. **WARNING:** This will override **any** local changes in your fork!
-```shell script
-git remote add upstream /url/to/original/repo
-git fetch upstream
-git checkout master
-git reset --hard upstream/master  
-git push origin master --force 
-```
-
-* Add `Signed-off-by` line by the committer at the end of the commit log message.
-```shell script
-git commit -s -m "Your commit message"
-```
 
 ## Linux
 * Clear memory cache
@@ -118,6 +87,20 @@ Get CPU and memory usage by processes on the current host. Also useful in Linux 
 * Process info (in Linux only!)<br>
 To get process info using its PID or search string: Command line, environment variables. Use [procInfo.sh](scripts/procInfo.sh).
 
+### The /proc
+The `/proc` file system has all the information about the running processes
+* Get a process command line (see usage in [procInfo.sh](scripts/procInfo.sh))
+```shell script
+# Assume PID is the process ID you are looking at
+cat /proc/${PID}/cmdline | tr '\0' ''
+```
+
+* Get a process environment variables (see usage in [procInfo.sh](scripts/procInfo.sh))
+```shell script
+# Assume PID is the process ID you are looking at
+cat /proc/${PID}/environ | tr '\0' '\n'
+```
+
 ### Screen
 * Full source in this [gist](https://gist.github.com/jctosta/af918e1618682638aa82)
 * `screen` [MacOS man page](https://ss64.com/osx/screen.html) and [bash man page](https://ss64.com/bash/screen.html)
@@ -183,6 +166,37 @@ From the [Apache HTTP server benchmarking tool](http://httpd.apache.org/docs/2.4
 ```shell script
 # A simple benchmarking of a web server. Running 100 requests with up to 10 concurrent requests
 ab -n 100 -c 10 http://www.jfrog.com/
+```
+
+## Git
+* Rebasing a branch on master
+```shell script
+# Update local copy of master
+git checkout master
+git pull
+
+# Rebase the branch on the updated master
+git checkout my-branch
+git rebase master
+
+# Rebase and squash
+git rebase master -i
+
+# If problems are found, follow on screen instructions to resolve and complete the rebase.
+```
+
+* Resetting a fork with upstream. **WARNING:** This will override **any** local changes in your fork!
+```shell script
+git remote add upstream /url/to/original/repo
+git fetch upstream
+git checkout master
+git reset --hard upstream/master  
+git push origin master --force 
+```
+
+* Add `Signed-off-by` line by the committer at the end of the commit log message.
+```shell script
+git commit -s -m "Your commit message"
 ```
 
 ## Docker
