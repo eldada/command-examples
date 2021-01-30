@@ -12,7 +12,7 @@ This is a repository with a collection of various useful commands and examples f
 * [Kubernetes](#kubernetes)
 * [Other](#other)
   * [Artifactory in Kubernetes](#artifactory-in-kubernetes)
-  * [Yaml to Properties](#yaml-to-properties)
+  * [Yaml to Properties](https://github.com/eldada/yaml-to-properties)
 * [Contribute](#contribute)
 
 ## Linux
@@ -359,22 +359,6 @@ helm upgrade --install artifactory \
     --set artifactory.preStartCommand='mkdir -pv /opt/jfrog/artifactory/var/bootstrap/artifactory/tomcat/lib; wget -O /opt/jfrog/artifactory/var/bootstrap/artifactory/tomcat/lib/mysql-connector-java-5.1.41.jar https://jcenter.bintray.com/mysql/mysql-connector-java/5.1.41/mysql-connector-java-5.1.41.jar' \
     center/jfrog/artifactory
 
-```
-
-### Yaml to Properties
-Convert a YAML formatted file to a flat properties file with a bash script and the [yq](https://github.com/mikefarah/yq) utility<br>
-**NOTES:**
-* You must have [yq](https://github.com/mikefarah/yq) v4 installed!
-* You should provide a valid yaml formatted file
-```shell script
-# Get usage
-./scripts/yaml-to-properties.sh --help
-
-# Convert all elements in file
-./scripts/yaml-to-properties.sh --file ./files/yaml-to-properties-example.yaml
-
-# Convert all elements under key "a"
-./scripts/yaml-to-properties.sh --file ./files/yaml-to-properties-example.yaml --key "a"
 ```
 
 ## Contribute
