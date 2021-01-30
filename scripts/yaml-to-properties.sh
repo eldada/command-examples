@@ -17,7 +17,7 @@ ${SCRIPT_NAME} - Convert a section from a YAML formatted file to properties form
 Usage: ${SCRIPT_NAME} <options>
 
 -f | --file <name>                : [MANDATORY] Yaml file to process
--k | --key <name>                 : Key to process.         Default: root
+-k | --key <name>                 : Key to process (default: .)
 -h | --help                       : Show this usage
 
 Examples:
