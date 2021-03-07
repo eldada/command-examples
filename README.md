@@ -89,7 +89,8 @@ Get CPU and memory usage by processes on the current host. Also useful in Linux 
 To get process info using its PID or search string: Command line, environment variables. Use [procInfo.sh](scripts/procInfo.sh).
 
 ### The /proc
-The `/proc` file system has all the information about the running processes
+The `/proc` file system has all the information about the running processes. See full description in the [proc man page](https://man7.org/linux/man-pages/man5/proc.5.html).
+
 * Get a process command line (see usage in [procInfo.sh](scripts/procInfo.sh))
 ```shell script
 # Assume PID is the process ID you are looking at
