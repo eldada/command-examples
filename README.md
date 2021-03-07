@@ -102,6 +102,16 @@ cat /proc/${PID}/cmdline | tr '\0' ' '
 cat /proc/${PID}/environ | tr '\0' '\n'
 ```
 
+* Get load average from disk instead of command
+```shell script
+cat /proc/loadavg | awk '{print $1 ", " $2 ", " $3}'
+```
+
+* Get top 10 processes IDs and names sorted with highest time waiting for disk IO (Aggregated block I/O delays, measured in clock ticks)
+```shell script
+cut -d" " -f 1,2,42 /proc/[0-9]*/stat | sort -n -k 3 | tail -10
+```
+
 ### Screen
 * Full source in this [gist](https://gist.github.com/jctosta/af918e1618682638aa82)
 * `screen` [MacOS man page](https://ss64.com/osx/screen.html) and [bash man page](https://ss64.com/bash/screen.html)
