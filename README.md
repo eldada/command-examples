@@ -74,6 +74,13 @@ wget -O curl.tar.bz2 http://www.magicermine.com/demos/curl/curl/curl-7.30.0.ermi
     ./curl --help
 ```
 
+* Single static binaries
+Taken from this cool [static-binaries](https://github.com/yunchih/static-binaries/) repository
+```shell script
+# tcpdump
+curl -O https://raw.githubusercontent.com/yunchih/static-binaries/master/tcpdump
+```
+
 * Get **http code** using **wget** (without **curl**)<br>
 In cases where **curl** is not available, use **wget** to get the http code returned from an HTTP endpoint
 ```shell script
