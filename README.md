@@ -79,7 +79,9 @@ Taken from this cool [static-binaries](https://github.com/yunchih/static-binarie
 ```shell script
 # tcpdump
 curl -O https://raw.githubusercontent.com/yunchih/static-binaries/master/tcpdump
-
+```
+* Single static binary `vi`
+```shell script
 # vi (vim)
 curl -OL https://eldada.jfrog.io/artifactory/tools/x86_64/vi.tar.gz
 ```
