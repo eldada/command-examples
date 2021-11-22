@@ -1,5 +1,5 @@
 # Commands example
-This is a repository with a collection of various useful commands and examples for easy copy -> paste
+This is a repository with a collection of useful commands, scripts and examples for easy copy -> paste
 
 # Table of contents
 * [Linux](#linux)
