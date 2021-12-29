@@ -1,3 +1,4 @@
+
 # Commands example
 This is a repository with a collection of useful commands, scripts and examples for easy copy -> paste
 
@@ -7,6 +8,7 @@ This is a repository with a collection of useful commands, scripts and examples 
   * [Sysbench](#sysbench)
   * [Apache Bench](#apache-bench)
 * [Git](#git)
+* [Java](#java)
 * [Docker](#docker)
   * [Tools](#tools)
 * [Kubernetes](#kubernetes)
@@ -223,6 +225,39 @@ git push origin master --force
 * Add `Signed-off-by` line by the committer at the end of the commit log message.
 ```shell script
 git commit -s -m "Your commit message"
+```
+
+## Java
+Some useful commands for debugging a `java` process
+```shell script
+# Go to the java/bin directory
+cd ${JAVA_HOME}/bin
+
+# Get your java process id
+PID=$(ps -ef | grep java | grep -v grep | awk '{print $2}')
+
+# Get JVM native memory usage
+# For this, you need your java process to run with the the -XX:NativeMemoryTracking=summary parameter
+./jcmd ${PID} VM.native_memory summary
+
+# Get all JVM info
+./jinfo ${PID}
+
+# Get JVM flags for a java process
+./jinfo -flags ${PID}
+
+# Get JVM heap info 
+./jcmd ${PID} GC.heap_info
+
+# Get JVM Metaspace info
+./jcmd ${PID} VM.metaspace
+
+# Trigger a full GC
+./jcmd ${PID} GC.run
+
+# Java heap memory histogram
+./jmap -histo ${PID}
+ 
 ```
 
 ## Docker
