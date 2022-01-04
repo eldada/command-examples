@@ -89,10 +89,11 @@ main () {
 
         [ -n "${ONCE}" ] && break # Exit if asked for only once
         read -r -s -n 1 -t "${RATE}" input
-        if [[ $input = "q" ]] || [[ $input = "Q" ]]; then
+        if [[ "${input}" = "q" ]] || [[ "${input}" = "Q" ]]; then
             echo
             break
         fi
+        sleep "${RATE}"
     done
 }
 
