@@ -115,6 +115,7 @@ main () {
     processOptions "$@"
     local total_cpu=0
     local total_memory=0
+    local input=
 
     while true; do
         echo '' > ${PROC_DATA} || errorExit "Failed writing ${PROC_DATA}"
@@ -154,8 +155,8 @@ main () {
         printf "%-7s %-20s %-10.2f %-10.2f\n" "Total" "-" $total_cpu $total_memory
 
         [ -n "${ONCE}" ] && break
-        read -s -n 1 -t ${RATE} input
-        if [[ $input = "q" ]] || [[ $input = "Q" ]]; then
+        read -r -s -n 1 -t "${RATE}" input
+        if [[ "$input" = "q" ]] || [[ "$input" = "Q" ]]; then
             echo
             break
         fi
