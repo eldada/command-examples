@@ -69,6 +69,9 @@ processOptions () {
 
 # The main loop
 main () {
+    # Check we have the ps executable
+    ps > /dev/null 2>&1 || errorExit "Missing the 'ps' command"
+
     processOptions "$@"
     local extra_args=
     local input=
