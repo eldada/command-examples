@@ -64,22 +64,27 @@ main () {
     local str=
 
 #    echo "My PID is $$"
-    echo "(Base RSS memory: $(grep VmRSS /proc/$$/status | awk '{print $2}'))"
+    echo "(Initial RSS memory: $(grep VmRSS /proc/$$/status | awk '{print $2}'))"
     echo
 
-    # Generating variables
-    echo -n "> Creating ${SIZE_KB} 1KB objects... "
+    # Generating objects
+    # Create a 1KB string
+    str="1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstu"
+    echo "> Creating ${SIZE_KB} 1KB objects... "
     for i in $(seq 0 "${SIZE_KB}"); do
-        # Create a 1KB string
-        str=$(seq -w -s '' 0 340)
         eval array"$i"="${str}"
-        [[ ${INTERVAL} -eq 0 ]] || sleep "${INTERVAL}"
+
+        # Save io by reading memory only every 50 iterations
+        if ! (( i % 50 )); then echo -ne "Current memory: $(grep VmRSS /proc/$$/status | awk '{print $2}')\r"; fi
+        if [[ ! "${INTERVAL}" == 0 ]]; then sleep "${INTERVAL}"; fi
     done
+    # Get final value
+    echo "Current memory: $(grep VmRSS /proc/$$/status | awk '{print $2}')"
+    echo
 
     echo "Done"
-    echo
 
-    echo "(Current RSS memory: $(grep VmRSS /proc/$$/status | awk '{print $2}'))"
+    echo "(Final RSS memory: $(grep VmRSS /proc/$$/status | awk '{print $2}'))"
     echo
 
     echo "Sleeping for ${WAIT} seconds"
