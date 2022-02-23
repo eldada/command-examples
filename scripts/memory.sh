@@ -62,11 +62,9 @@ processOptions () {
 main () {
     processOptions "$@"
     local str=
-    local memory=
 
-    echo "My PID is $$"
-    echo -n "## Base RSS memory: "
-    grep VmRSS /proc/$$/status | awk '{print $2}'
+#    echo "My PID is $$"
+    echo "(Base RSS memory: $(grep VmRSS /proc/$$/status | awk '{print $2}'))"
     echo
 
     # Generating variables
@@ -79,12 +77,12 @@ main () {
     done
 
     echo "Done"
+    echo
 
-    echo -n "## Current RSS memory: "
-    grep VmRSS /proc/$$/status | awk '{print $2}'
+    echo "(Current RSS memory: $(grep VmRSS /proc/$$/status | awk '{print $2}'))"
+    echo
 
     echo "Sleeping for ${WAIT} seconds"
-
     sleep "${WAIT}"
 }
 
