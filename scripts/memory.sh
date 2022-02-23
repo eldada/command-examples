@@ -73,7 +73,7 @@ main () {
     echo -n "> Creating ${SIZE_KB} 1KB objects... "
     for i in $(seq 0 "${SIZE_KB}"); do
         # Create a 1KB string
-	    str=$(seq -w -s '' 0 340)
+        str=$(seq -w -s '' 0 340)
         eval array"$i"="${str}"
         [[ ${INTERVAL} -eq 0 ]] || sleep "${INTERVAL}"
     done
