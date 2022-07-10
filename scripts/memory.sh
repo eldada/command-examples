@@ -73,7 +73,7 @@ processOptions () {
 # This is the function that actually holds the memory
 # Inspired by https://unix.stackexchange.com/a/99390/40526
 malloc() {
-    sh -c "MEMBLOB=\$(dd if=/dev/urandom bs=1MB count=${SIZE_MB}); sleep ${WAIT}"
+    MEMBLOB=$(dd if=/dev/urandom bs=1MB count=${SIZE_MB}); sleep ${WAIT}
 }
 
 main () {
