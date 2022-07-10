@@ -80,10 +80,10 @@ main () {
     processOptions "$@"
 
     echo "Starting a process to hold $SIZE_MB MB of memory and wait for $WAIT seconds"
-    [[ ! ${RESTART} ]] && echo "(Will restart after $WAIT seconds are complete)"
+    [[ ${RESTART} =~ true ]] && echo "(Will restart after $WAIT seconds are complete)"
     while true; do
         malloc || errorExit "Running malloc() failed"
-        if [[ ! ${RESTART} ]]; then echo "Done"; break; fi
+        if [[ ${RESTART} =~ false ]]; then echo "Done"; break; fi
     done
 }
 
