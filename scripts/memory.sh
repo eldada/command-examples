@@ -1,9 +1,14 @@
 #!/bin/bash
+
+# A script to spin up a process to hold a given memory block in the air until complete or terminated
+# Useful for testing memory usage impact in containers environments such as Kubernetes
+
 SCRIPT_NAME=$0
 
-SIZE_KB=1024
+# Defaults
+SIZE_MB=1024
 WAIT=300
-INTERVAL=0
+RESTART=false
 
 errorExit () {
     echo -e "\nERROR: $1\n"
@@ -17,15 +22,21 @@ ${SCRIPT_NAME} - Create a process to hold RAM memory for a given time
 
 Usage: ${SCRIPT_NAME} <options>
 
--k | --kb                       : Size of memory to hold in KB (default $SIZE_KB KB)
--w | --wait                     : Keep running when done (default $WAIT seconds)
--i | --interval                 : Interval between each memory increase (default $INTERVAL)
--h | --help                     : Show this usage
+-m | --mb                   : Size of memory in MB to hold (default $SIZE_MB)
+-w | --wait                 : Seconds to wait after memory block allocated (default $WAIT seconds)
+-r | --restart              : (true|false) Restart process after wait time passes (default false)
+-h | --help                 : Show this usage
 
 Examples:
 ========
-# Create a 20 MB memory process and wait 10 minutes
-$ ${SCRIPT_NAME} --kb 20480
+# Create a 500 MB memory process and wait default time ($WAIT seconds)
+$ ${SCRIPT_NAME} --mb 500
+
+# Create a 50 MB memory process and wait 300 seconds
+$ ${SCRIPT_NAME} --mb 50 --wait 300
+
+# Create a 100 MB memory process, wait 30 seconds and restart
+$ ${SCRIPT_NAME} --mb 100 --wait 300 --restart true
 
 END_USAGE
 
@@ -36,16 +47,16 @@ END_USAGE
 processOptions () {
     while [[ $# -gt 0 ]]; do
         case "$1" in
-            -k | --kb)
-                SIZE_KB="$2"
+            -m | --mb)
+                SIZE_MB="$2"
                 shift 2
             ;;
             -w | --wait)
                 WAIT="$2"
                 shift 2
             ;;
-            -i | --interval)
-                INTERVAL="$2"
+            -r | --restart)
+                RESTART="$2"
                 shift 2
             ;;
             -h | --help)
@@ -59,45 +70,21 @@ processOptions () {
     done
 }
 
+# This is the function that actually holds the memory
+# Inspired by https://unix.stackexchange.com/a/99390/40526
+malloc() {
+    sh -c "MEMBLOB=\$(dd if=/dev/urandom bs=1MB count=${SIZE_MB}); sleep ${WAIT}"
+}
+
 main () {
     processOptions "$@"
-    local s=
-    local str=
 
-#    echo "My PID is $$"
-    echo "(Initial RSS memory: $(grep VmRSS /proc/$$/status | awk '{print $2}'))"
-    echo
-
-    # Generating objects
-    # Create a 1KB string
-    echo "> Creating a 1KB string"
-    s='1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ____'
-    for a in $(seq 1 8); do
-        str="${str}${s}"
-#        echo -ne "* $a\r"
+    echo "Starting a process to hold $SIZE_MB MB of memory and wait for $WAIT seconds"
+    [[ ! ${RESTART} ]] && echo "(Will restart after $WAIT seconds are complete)"
+    while true; do
+        malloc || errorExit "Running malloc() failed"
+        if [[ ! ${RESTART} ]]; then echo "Done"; break; fi
     done
-
-    echo "(String length is ${#str} bytes)"
-
-    echo "> Creating ${SIZE_KB} 1KB objects... "
-    for i in $(seq 0 "${SIZE_KB}"); do
-        eval array"$i"=${str}
-
-        # Save io by reading memory only every 50 iterations
-        if ! (( i % 50 )); then echo -ne "Current memory: $(grep VmRSS /proc/$$/status | awk '{print $2}')\r"; fi
-        if [[ ! "${INTERVAL}" == 0 ]]; then sleep "${INTERVAL}"; fi
-    done
-    # Get final value
-    echo "Current memory: $(grep VmRSS /proc/$$/status | awk '{print $2}')"
-    echo
-
-    echo "Done"
-
-    echo "(Final RSS memory: $(grep VmRSS /proc/$$/status | awk '{print $2}'))"
-    echo
-
-    echo "Sleeping for ${WAIT} seconds"
-    sleep "${WAIT}"
 }
 
 main "$@"
