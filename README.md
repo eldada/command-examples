@@ -86,7 +86,7 @@ curl -O https://raw.githubusercontent.com/yunchih/static-binaries/master/tcpdump
 # vi (vim)
 curl -OL https://eldada.jfrog.io/artifactory/tools/x86_64/vi.tar.gz
 ```
-* 
+
 * Single static binary `jq` (Linux). Look in https://stedolan.github.io/jq/download/ for additional flavors
 ```shell script
 # jq
