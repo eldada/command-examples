@@ -86,6 +86,12 @@ curl -O https://raw.githubusercontent.com/yunchih/static-binaries/master/tcpdump
 # vi (vim)
 curl -OL https://eldada.jfrog.io/artifactory/tools/x86_64/vi.tar.gz
 ```
+* 
+* Single static binary `jq` (Linux). Look in https://stedolan.github.io/jq/download/ for additional flavors
+```shell script
+# jq
+curl -OL https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
+```
 
 * Get **http code** using **wget** (without **curl**)<br>
 In cases where **curl** is not available, use **wget** to get the http code returned from an HTTP endpoint
