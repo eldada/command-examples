@@ -1,0 +1,11 @@
+# A simple ubuntu with tools and non root user
+FROM ubuntu:22.10
+
+# Install the tools and create the ubuntu user
+RUN apt update && \
+    apt install -y vim curl && \
+    useradd -ms /bin/bash ubuntu
+
+# Switch to ubuntu user and /home/ubuntu working directory
+USER ubuntu
+WORKDIR /home/ubuntu

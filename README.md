@@ -10,6 +10,7 @@ This is a repository with a collection of useful commands, scripts and examples 
 * [Java](#java)
 * [Docker](#docker)
   * [Tools](#tools)
+  * [My Dockerfiles](#my-dockerfiles)
 * [Kubernetes](#kubernetes)
 * [Other](#other)
   * [Artifactory in Kubernetes](#artifactory-in-kubernetes)
@@ -345,6 +346,13 @@ A collection of useful Docker tools
 * A simple terminal UI for Docker and docker-compose: [lazydocker](https://github.com/jesseduffield/lazydocker)
 * A web based UI for local and remote Docker: [Portainer](https://www.portainer.io/)
 * Analyse a Docker image with [dive](https://github.com/wagoodman/dive)
+
+### My Dockerfiles
+A few `Dockerfile`s I use in my work
+* An Ubuntu with added tools and no root: [Dockerfile-ubuntu-with-tools](Dockerfiles/Dockerfile-ubuntu-with-tools)
+```shell
+docker build -f Dockerfile-ubuntu-with-tools -t eldada.jfrog.io/docker/ubuntu-with-tools:22.10 .
+```
 
 ## Kubernetes
 Kubernetes commands and scripts were moved to my [Kubernetes-scripts](https://github.com/eldada/kubernetes-scripts) repository.
