@@ -73,7 +73,7 @@ processOptions () {
 # This is the function that actually holds the memory
 # Inspired by https://unix.stackexchange.com/a/99390/40526
 malloc() {
-    MEMBLOB=$(dd if=/dev/urandom bs=1MB count=${SIZE_MB}); sleep ${WAIT}
+    MEMBLOB=$(dd if=/dev/urandom bs=1MB count=${SIZE_MB}); echo -n "Sleeping now for ${WAIT} seconds... "; sleep ${WAIT}; echo "Done"
 }
 
 main () {
@@ -83,7 +83,7 @@ main () {
     [[ ${RESTART} =~ true ]] && echo "(Will restart after $WAIT seconds are complete)"
     while true; do
         malloc || errorExit "Running malloc() failed"
-        if [[ ${RESTART} =~ false ]]; then echo "Done"; break; fi
+        if [[ ${RESTART} =~ false ]]; then echo "All done"; break; fi
     done
 }
 
