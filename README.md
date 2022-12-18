@@ -13,6 +13,7 @@ This is a repository with a collection of useful commands, scripts and examples 
   * [My Dockerfiles](#my-dockerfiles)
 * [Kubernetes](#kubernetes)
 * [Other](#other)
+  * [Artifactory Scripts](#artifactory-scripts)
   * [Artifactory in Kubernetes](#artifactory-in-kubernetes)
   * [Yaml to Properties](https://github.com/eldada/yaml-to-properties)
 * [Contribute](#contribute)
@@ -358,6 +359,10 @@ docker build -f Dockerfile-ubuntu-with-tools -t eldada.jfrog.io/docker/ubuntu-wi
 Kubernetes commands and scripts were moved to my [Kubernetes-scripts](https://github.com/eldada/kubernetes-scripts) repository.
 
 ## Other
+
+### Artifactory Scripts
+A collection of scripts I use to automate some tests and tasks with Artifactory
+* [artifactoryDownloadsLoop.sh](scripts/artifactoryDownloadsLoop.sh) - Create and upload a single binary, generic file to Artifactory and download it in loops with set iterations and parallel threads
 
 ### Artifactory in Kubernetes
 Examples of commands to install Artifactory in K8s with various databases.
