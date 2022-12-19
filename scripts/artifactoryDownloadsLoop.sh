@@ -86,17 +86,30 @@ processOptions () {
     done
 }
 
+testArtifactory () {
+    echo "Check Artifactory is ready to accept connections"
+    echo -n "Readiness... "
+    curl -f -s -k "${ART_URL}/api/v1/system/readiness" -o /dev/null || errorExit "Artifactory readiness failed"
+    echo "pass"
+
+    echo -n "Check repository ${REPO} exists... "
+    curl -f -s -k -u ${USER}:${PASS} "${ART_URL}/api/repositories/${REPO}" -o /dev/null || errorExit "Repository ${REPO} validation failed"
+    echo "pass"
+}
+
 createAndUploadGenericFile () {
     local test_file="test${SIZE_MB}MB"
     FULL_PATH="${ART_URL}/${REPO}/${test_file}"
 
     # Create a unique binary, generic file
-    echo "Creating a $SIZE_MB MB file ${test_file}"
+    echo "Creating a $SIZE_MB MB file ${test_file}... "
     dd if=/dev/urandom of=${test_file} bs=1048576 count=${SIZE_MB} > /dev/null 2>&1 || errorExit "Creating file ${test_file} failed"
+    echo "done"
 
     # Upload file
     echo "Uploading ${test_file} to ${FULL_PATH}"
-    curl -f -s -u ${USER}:${PASS} -X PUT -T ./${test_file} "${FULL_PATH}" -o /dev/null || errorExit "Uploading ${test_file} to ${FULL_PATH} failed"
+    curl -f -k -u ${USER}:${PASS} -X PUT -T ./${test_file} "${FULL_PATH}" -o upload-out.log || errorExit "Uploading ${test_file} to ${FULL_PATH} failed"
+    echo "See upload-out.log for output details"
 
     # Remove file
     echo "Deleting ${test_file}"
@@ -110,7 +123,7 @@ downloadLoop () {
     for ((i=1; i <= ${ITERATIONS}; i++)); do
         echo "--- Download iteration ${i}. Starting ${THREADS} parallel threads"
         for ((j=1; j <= ${THREADS}; j++)); do
-            curl -L -s -f -u ${USER}:${PASS} -X GET "${FULL_PATH}" -o /dev/null &
+            curl -L -k -s -f -u ${USER}:${PASS} -X GET "${FULL_PATH}" -o /dev/null &
             pid_array[$j]=$!
         done
         echo "Waiting for ${#pid_array[@]} processes (${pid_array[@]})"
@@ -120,6 +133,7 @@ downloadLoop () {
 
 main () {
     processOptions $@
+    testArtifactory
     createAndUploadGenericFile
     downloadLoop
 }
