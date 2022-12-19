@@ -19,6 +19,7 @@ ITERATIONS=1
 
 errorExit () {
     echo -e "\nERROR: $1\n"
+    echo "Check logs under ./logs/"
     exit 1
 }
 
@@ -89,11 +90,11 @@ processOptions () {
 testArtifactory () {
     echo "Check Artifactory is ready to accept connections"
     echo -n "Readiness... "
-    curl -f -s -k "${ART_URL}/api/v1/system/readiness" -o /dev/null || errorExit "Artifactory readiness failed"
+    curl -f -s -k "${ART_URL}/api/v1/system/readiness" -o ./logs/check-readiness.log || errorExit "Artifactory readiness failed"
     echo "pass"
 
     echo -n "Check repository ${REPO} exists... "
-    curl -f -s -k -u ${USER}:${PASS} "${ART_URL}/api/repositories/${REPO}" -o /dev/null || errorExit "Repository ${REPO} validation failed"
+    curl -f -s -k -u ${USER}:${PASS} "${ART_URL}/api/repositories/${REPO}" -o ./logs/check-repository.log || errorExit "Repository ${REPO} validation failed"
     echo "pass"
 }
 
@@ -102,14 +103,13 @@ createAndUploadGenericFile () {
     FULL_PATH="${ART_URL}/${REPO}/${test_file}"
 
     # Create a unique binary, generic file
-    echo "Creating a $SIZE_MB MB file ${test_file}... "
-    dd if=/dev/urandom of=${test_file} bs=1048576 count=${SIZE_MB} > /dev/null 2>&1 || errorExit "Creating file ${test_file} failed"
+    echo -n "Creating a $SIZE_MB MB file ${test_file}... "
+    dd if=/dev/urandom of=${test_file} bs=1048576 count=${SIZE_MB} > ./logs/create-file.log 2>&1 || errorExit "Creating file ${test_file} failed"
     echo "done"
 
     # Upload file
     echo "Uploading ${test_file} to ${FULL_PATH}"
-    curl -f -k -u ${USER}:${PASS} -X PUT -T ./${test_file} "${FULL_PATH}" -o upload-out.log || errorExit "Uploading ${test_file} to ${FULL_PATH} failed"
-    echo "See upload-out.log for output details"
+    curl -f -k -u ${USER}:${PASS} -X PUT -T ./${test_file} "${FULL_PATH}" -o ./logs/upload-out.log || errorExit "Uploading ${test_file} to ${FULL_PATH} failed"
 
     # Remove file
     echo "Deleting ${test_file}"
@@ -133,6 +133,8 @@ downloadLoop () {
 
 main () {
     processOptions $@
+    rm -rf ./logs
+    mkdir -p ./logs
     testArtifactory
     createAndUploadGenericFile
     downloadLoop
