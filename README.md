@@ -11,6 +11,7 @@ This is a repository with a collection of useful commands, scripts and examples 
 * [Docker](#docker)
   * [Tools](#tools)
   * [My Dockerfiles](#my-dockerfiles)
+* [Artifactory](#artifactory)
 * [Contribute](#contribute)
 
 ## Linux
@@ -349,6 +350,9 @@ A few `Dockerfile`s I use in my work
 ```shell
 docker build -f Dockerfile-ubuntu-with-tools -t eldada.jfrog.io/docker/ubuntu-with-tools:22.10 .
 ```
+
+## Artifactory
+See Artifactory related scripts and examples in [artifactory](artifactory)
 
 ## Contribute
 Contributing is more than welcome with a pull request
