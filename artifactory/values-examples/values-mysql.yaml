@@ -1,23 +1,30 @@
 # Using a single yaml for two separate charts as there are no conflicting keys
 
 # MySQL properties for the mysql chart
-mysqlRootPassword: rootPassword1
-mysqlUser: artifactory
-mysqlPassword: password1
-mysqlDatabase: artdb
+image:
+  registry: docker.io
+  repository: bitnami/mysql
+  tag: 8.0.31-debian-11-r20
+
+auth:
+  rootPassword: "password"
+  database: "artifactory"
+  username: "artifactory"
+  password: "password1"
 
 # Artifactory properties to use the separate MySQL for the jfrog/artifactory chart
 postgresql:
   enabled: false
-
-artifactory:
-  preStartCommand: 'mkdir -pv /opt/jfrog/artifactory/var/bootstrap/artifactory/tomcat/lib; wget -O /opt/jfrog/artifactory/var/bootstrap/artifactory/tomcat/lib/mysql-connector-java-5.1.41.jar https://jcenter.bintray.com/mysql/mysql-connector-java/5.1.41/mysql-connector-java-5.1.41.jar'
 
 database:
   type: mysql
   driver: com.mysql.jdbc.Driver
   user: artifactory
   password: password1
-  url: 'jdbc:mysql://mysql:3306/artdb?characterEncoding=UTF-8&elideSetAutoCommits=true'
+  url: 'jdbc:mysql://mysql:3306/artifactory?characterEncoding=UTF-8&elideSetAutoCommits=true'
+
+# Get the MySQL jdbc driver needed
+artifactory:
+  preStartCommand: 'echo "###### Getting MySQL driver ######"; mkdir -p /opt/jfrog/artifactory/var/bootstrap/artifactory/tomcat/lib; curl -k -s -L -o /opt/jfrog/artifactory/var/bootstrap/artifactory/tomcat/lib/mysql-connector-java.jar https://jcenter.jfrog.io/artifactory/jcenter/mysql/mysql-connector-java/8.0.23/mysql-connector-java-8.0.23.jar; echo "##################################"'
 
 splitServicesToContainers: true

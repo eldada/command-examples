@@ -38,11 +38,20 @@ helm upgrade --install artifactory jfrog/artifactory -f values-examples/values-d
 #### With external PostgreSQL
 Install Artifactory with external PostgreSQL database in K8s
 ```shell
+# Add Bitnami helm repository
+helm repo add bitnami https://charts.bitnami.com/bitnami
+
 # Install PostgreSQL
 helm upgrade --install postgresql bitnami/postgresql -f values-examples/values-postgresql.yaml
 
 # Install Artifactory (PostgreSQL driver already included in Docker image)
-helm upgrade --install artifactory jfrog/artifactory
+helm upgrade --install artifactory jfrog/artifactory -f values-examples/values-postgresql.yaml
+
+# Open a shell to the postgresql pod and connect to the database
+kubectl exec -it postgresql-0 -- bash
+
+# Inside the container, connect to the database
+psql --host postgresql -U artifactory
 
 # You can open a client container to this database with
 kubectl run pg-client --rm --tty -i --restart='Never' --image docker.io/bitnami/postgresql:15.1.0-debian-11-r13 \
@@ -52,10 +61,20 @@ kubectl run pg-client --rm --tty -i --restart='Never' --image docker.io/bitnami/
 #### With external MySQL (deprecated)
 Install Artifactory with external MySQL database in K8s (deprecated and will eventually not be supported)
 ```shell
+# Add Bitnami helm repository
+helm repo add bitnami https://charts.bitnami.com/bitnami
+
 # Install MySQL
-helm upgrade --install mysql stable/mysql -f values-examples/values-mysql.yaml
+helm upgrade --install mysql bitnami/mysql -f values-examples/values-mysql.yaml
 
 # Install Artifactory
 helm upgrade --install artifactory jfrog/artifactory -f values-examples/values-mysql.yaml
+
+# Open a shell to the mysql pod and connect to the database
+kubectl exec -it mysql-0 -- bash
+
+# Inside the container, connect to the database
+mysql --host=localhost --user=artifactory --password=password1 artifactory
+
 ```
 

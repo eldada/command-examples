@@ -6,10 +6,11 @@ image:
   repository: bitnami/postgresql
   tag: 15.1.0-debian-11-r13
 
-
-postgresqlUsername: artifactory
-postgresqlDatabase: artifactory
-postgresqlPassword: password1
+auth:
+  postgresPassword: "password"
+  database: "artifactory"
+  username: "artifactory"
+  password: "password1"
 
 # Artifactory properties to use the separate PostgreSQL for the jfrog/artifactory chart
 postgresql:
