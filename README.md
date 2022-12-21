@@ -11,11 +11,6 @@ This is a repository with a collection of useful commands, scripts and examples 
 * [Docker](#docker)
   * [Tools](#tools)
   * [My Dockerfiles](#my-dockerfiles)
-* [Kubernetes](#kubernetes)
-* [Other](#other)
-  * [Artifactory Scripts](#artifactory-scripts)
-  * [Artifactory in Kubernetes](#artifactory-in-kubernetes)
-  * [Yaml to Properties](https://github.com/eldada/yaml-to-properties)
 * [Contribute](#contribute)
 
 ## Linux
@@ -353,90 +348,6 @@ A few `Dockerfile`s I use in my work
 * An Ubuntu with added tools and no root: [Dockerfile-ubuntu-with-tools](Dockerfiles/Dockerfile-ubuntu-with-tools)
 ```shell
 docker build -f Dockerfile-ubuntu-with-tools -t eldada.jfrog.io/docker/ubuntu-with-tools:22.10 .
-```
-
-## Kubernetes
-Kubernetes commands and scripts were moved to my [Kubernetes-scripts](https://github.com/eldada/kubernetes-scripts) repository.
-
-## Other
-
-### Artifactory Scripts
-A collection of scripts I use to automate some tests and tasks with Artifactory
-* [artifactoryDownloadsLoop.sh](scripts/artifactoryDownloadsLoop.sh) - Create and upload a single binary, generic file to Artifactory and download it in loops with set iterations and parallel threads
-
-### Artifactory in Kubernetes
-Examples of commands to install Artifactory in K8s with various databases.
-
-**NOTE:** If using a [Kubernetes cluster with RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) disabled, 
-must pass `--set rbac.create=false` to all Artifactory `helm install/upgrade` commands.
-
-#### Setup Helm repository 
-Add JFrog's [Chart-Center](https://chartcenter.io/bitnami/postgresql) helm repository
-```shell script
-helm repo add center https://repo.chartcenter.io
-```
-
-#### Default install
-Install with Artifactory's default included database PostgreSQL
-```shell script
-helm upgrade --install artifactory center/jfrog/artifactory 
-```
-
-#### With embedded Derby
-Install with Artifactory's embedded database Derby
-```shell script
-helm upgrade --install artifactory \
-    --set postgresql.enabled=false center/jfrog/artifactory 
-```
-
-#### With external PostgreSQL
-Install Artifactory with external PostgreSQL database in K8s
-```shell script
-# Install PostgreSQL
-helm upgrade --install postgresql \
-    --set postgresqlUsername=artifactory \
-    --set postgresqlDatabase=artifactory \
-    --set postgresqlPassword=password1 \
-    center/bitnami/postgresql
-
-# Install Artifactory (PostgreSQL driver already included in Docker image)
-helm upgrade --install artifactory \
-    --set postgresql.enabled=false \
-    --set database.type=postgresql \
-    --set database.driver=org.postgresql.Driver \
-    --set database.user=artifactory \
-    --set database.password=password1 \
-    --set database.url='jdbc:postgresql://postgresql:5432/artifactory' \
-    center/jfrog/artifactory
-
-# You can open a client container to this database with
-kubectl run postgresql-client --rm --tty -i --restart='Never' --namespace default --image docker.io/bitnami/postgresql:11.8.0-debian-10-r57 \
-    --env="PGPASSWORD=password1" --labels="postgresql-client=true" --command -- psql --host postgresql -U artifactory
-
-```
-
-#### With external MySQL
-Install Artifactory with external MySQL database in K8s
-```shell script
-# Install MySQL
-helm upgrade --install mysql \
-    --set mysqlRootPassword=rootPassword1 \
-    --set mysqlUser=artifactory \
-    --set mysqlPassword=password1 \
-    --set mysqlDatabase=artdb \
-     center/stable/mysql
-
-# Install Artifactory
-helm upgrade --install artifactory \
-    --set postgresql.enabled=false \
-    --set database.type=mysql \
-    --set database.driver=com.mysql.jdbc.Driver \
-    --set database.user=artifactory \
-    --set database.password=password1 \
-    --set database.url='jdbc:mysql://mysql:3306/artdb?characterEncoding=UTF-8&elideSetAutoCommits=true' \
-    --set artifactory.preStartCommand='mkdir -pv /opt/jfrog/artifactory/var/bootstrap/artifactory/tomcat/lib; wget -O /opt/jfrog/artifactory/var/bootstrap/artifactory/tomcat/lib/mysql-connector-java-5.1.41.jar https://jcenter.bintray.com/mysql/mysql-connector-java/5.1.41/mysql-connector-java-5.1.41.jar' \
-    center/jfrog/artifactory
-
 ```
 
 ## Contribute

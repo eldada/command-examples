@@ -1,0 +1,6 @@
+# Disable PostgreSQL
+postgresql:
+  enabled: false
+
+
+splitServicesToContainers: true

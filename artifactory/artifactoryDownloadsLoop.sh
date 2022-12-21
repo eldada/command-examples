@@ -7,10 +7,10 @@ SCRIPT_NAME=$0
 
 # Set some defaults
 ART_URL=http://localhost:8082/artifactory
-REPO=example-repo-local
+REPO="example-repo-local"
 SIZE_MB=1
-USER=admin
-PASS=password
+USER="admin"
+PASS="password"
 THREADS=1
 ITERATIONS=1
 
@@ -88,6 +88,10 @@ processOptions () {
 }
 
 testArtifactory () {
+    echo -n "Check Artifactory is accessible... "
+    curl -f -k -i "${ART_URL}" > ./logs/check-accessible.log 2>&1 || errorExit "Artifactory is not accessible on ${ART_URL}"
+    echo "pass"
+
     echo "Check Artifactory is ready to accept connections"
     echo -n "Readiness... "
     curl -f -s -k "${ART_URL}/api/v1/system/readiness" -o ./logs/check-readiness.log || errorExit "Artifactory readiness failed"
@@ -132,7 +136,7 @@ downloadLoop () {
 }
 
 main () {
-    processOptions $@
+    processOptions "$@"
     rm -rf ./logs
     mkdir -p ./logs
     testArtifactory
@@ -140,4 +144,4 @@ main () {
     downloadLoop
 }
 
-main $@
+main "$@"

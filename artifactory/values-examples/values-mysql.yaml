@@ -1,0 +1,23 @@
+# Using a single yaml for two separate charts as there are no conflicting keys
+
+# MySQL properties for the mysql chart
+mysqlRootPassword: rootPassword1
+mysqlUser: artifactory
+mysqlPassword: password1
+mysqlDatabase: artdb
+
+# Artifactory properties to use the separate MySQL for the jfrog/artifactory chart
+postgresql:
+  enabled: false
+
+artifactory:
+  preStartCommand: 'mkdir -pv /opt/jfrog/artifactory/var/bootstrap/artifactory/tomcat/lib; wget -O /opt/jfrog/artifactory/var/bootstrap/artifactory/tomcat/lib/mysql-connector-java-5.1.41.jar https://jcenter.bintray.com/mysql/mysql-connector-java/5.1.41/mysql-connector-java-5.1.41.jar'
+
+database:
+  type: mysql
+  driver: com.mysql.jdbc.Driver
+  user: artifactory
+  password: password1
+  url: 'jdbc:mysql://mysql:3306/artdb?characterEncoding=UTF-8&elideSetAutoCommits=true'
+
+splitServicesToContainers: true

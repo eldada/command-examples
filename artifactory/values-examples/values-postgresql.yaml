@@ -1,0 +1,25 @@
+# Using a single yaml for two separate charts as there are no conflicting keys
+
+# PostgreSQL properties for the bitnami/postgresql chart
+image:
+  registry: docker.io
+  repository: bitnami/postgresql
+  tag: 15.1.0-debian-11-r13
+
+
+postgresqlUsername: artifactory
+postgresqlDatabase: artifactory
+postgresqlPassword: password1
+
+# Artifactory properties to use the separate PostgreSQL for the jfrog/artifactory chart
+postgresql:
+  enabled: false
+
+database:
+  type: postgresql
+  driver: org.postgresql.Driver
+  user: artifactory
+  password: password1
+  url: 'jdbc:postgresql://postgresql:5432/artifactory'
+
+splitServicesToContainers: true
