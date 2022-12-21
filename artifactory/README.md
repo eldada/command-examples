@@ -14,7 +14,7 @@ docker run -d --name rt -p 8082:8082 -v $(pwd)/artifactory:/var/opt/jfrog/artifa
 Open a browser to http://localhost:8082
 
 ### Artifactory in Kubernetes
-Examples of commands to install Artifactory in K8s with helm using various databases.
+Examples of commands to install Artifactory in K8s with helm using various databases. See examples used here of custom values files in [values-examples](values-examples).
 
 #### Setup Helm repository 
 Add JFrog's [Helm charts](https://charts.jfrog.io) repository
@@ -75,6 +75,4 @@ kubectl exec -it mysql-0 -- bash
 
 # Inside the container, connect to the database
 mysql --host=localhost --user=artifactory --password=password1 artifactory
-
 ```
-
