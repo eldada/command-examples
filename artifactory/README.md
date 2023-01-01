@@ -2,7 +2,7 @@
 A collection of commands and scripts I use to automate some tasks with [JFrog Artifactory](https://jfrog.com/artifactory/)
 
 ## Scripts
-* [artifactoryDownloadsLoop.sh](artifactoryDownloadsLoop.sh) - Create and upload a single binary, generic file to Artifactory and download it in loops with set iterations and parallel threads
+* [artifactoryDownloadsLoop.sh](artifactoryDownloadsLoop.sh) - Create and upload a single generic binary generic file to Artifactory and download it in loops with set iterations and parallel threads
 
 ## Run Artifactory
 ### Artifactory with local Docker

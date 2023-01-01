@@ -20,7 +20,7 @@ This is a repository with a collection of useful commands, scripts and examples 
 sync && echo 3 | sudo tee /proc/sys/vm/drop_caches
 ```
 
-* Create self signed SSL key and certificate
+* Create a self-signed SSL key and certificate
 ```shell script
 mkdir -p certs/my_com
 openssl req -nodes -x509 -newkey rsa:4096 -keyout certs/my_com/my_com.key -out certs/my_com/my_com.crt -days 356 -subj "/C=US/ST=California/L=SantaClara/O=IT/CN=localhost"
