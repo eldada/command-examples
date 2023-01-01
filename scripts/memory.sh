@@ -9,6 +9,7 @@ SCRIPT_NAME=$0
 SIZE_MB=1024
 WAIT=300
 RESTART=false
+GAP=10
 
 errorExit () {
     echo -e "\nERROR: $1\n"
@@ -22,9 +23,10 @@ ${SCRIPT_NAME} - Create a process to hold RAM memory for a given time
 
 Usage: ${SCRIPT_NAME} <options>
 
--m | --mb                   : Size of memory in MB to hold (default $SIZE_MB)
--w | --wait                 : Seconds to wait after memory block allocated (default $WAIT seconds)
+-m | --mb                   : Size of memory in MB to hold                        (default $SIZE_MB)
+-w | --wait                 : Seconds to wait after memory block allocated        (default $WAIT seconds)
 -r | --restart              : (true|false) Restart process after wait time passes (default false)
+-g | --gap                  : Gap between memory blocks in seconds                (default 10)
 -h | --help                 : Show this usage
 
 Examples:
@@ -37,6 +39,9 @@ $ ${SCRIPT_NAME} --mb 50 --wait 300
 
 # Create a 100 MB memory process, wait 30 seconds and restart
 $ ${SCRIPT_NAME} --mb 100 --wait 300 --restart true
+
+# Create a 100 MB memory process, wait 30 seconds and restart, creating a 30 seconds gap between runs
+$ ${SCRIPT_NAME} --mb 100 --wait 300 --restart true --gap 30
 
 END_USAGE
 
@@ -59,6 +64,10 @@ processOptions () {
                 RESTART="$2"
                 shift 2
             ;;
+            -g | --gap)
+                GAP="$2"
+                shift 2
+            ;;
             -h | --help)
                 usage
                 exit 0
@@ -73,7 +82,8 @@ processOptions () {
 # This is the function that actually holds the memory
 # Inspired by https://unix.stackexchange.com/a/99390/40526
 malloc() {
-    MEMBLOB=$(dd if=/dev/urandom bs=1MB count=${SIZE_MB}); echo -n "Sleeping now for ${WAIT} seconds... "; sleep ${WAIT}; echo "Done"
+    echo "Using 'dd' to create a $SIZE_MB MB blob and hold it in memory for $WAIT seconds"
+    MEMBLOB=$(dd if=/dev/urandom bs=1048576 count=${SIZE_MB} | tr -d '\0'); echo -n "Sleeping now for ${WAIT} seconds... "; sleep ${WAIT}; echo "Done"
 }
 
 main () {
@@ -84,6 +94,9 @@ main () {
     while true; do
         malloc || errorExit "Running malloc() failed"
         if [[ ${RESTART} =~ false ]]; then echo "All done"; break; fi
+        echo "- Create a gap of $GAP seconds"
+        MEMBLOB=''
+        sleep "${GAP}"
     done
 }
 
