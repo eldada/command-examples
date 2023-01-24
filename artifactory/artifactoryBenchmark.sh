@@ -22,14 +22,14 @@ errorExit () {
 }
 
 usage () {
-    cat << END_USAGE
+    cat <<END_USAGE
 
 Usage: ${SCRIPT_NAME} <options>
 
--l | --url                             : Artifactory URL                            (defaults to $ART_URL)
--u | --user                            : Artifactory user                           (defaults to $USER)
--p | --pass | --password               : Artifactory password, API key or token     (defaults to $PASS)
--r | --repo | --repository             : Repository                                 (defaults to $REPO)
+-l | --url                             : Artifactory URL                            (defaults to ${ART_URL})
+-u | --user                            : Artifactory user                           (defaults to ${USER})
+-p | --pass | --password               : Artifactory password, API key or token     (defaults to ${PASS})
+-r | --repo | --repository             : Repository                                 (defaults to ${REPO})
 -s | --size                            : Size in MB                                 (defaults to ${SIZE_MB})
 -i | --iterations                      : Number of test iterations                  (defaults to ${ITERATIONS})
 -t | --test                            : Test type (upload/download)                (defaults to ${TEST})
@@ -38,6 +38,7 @@ Usage: ${SCRIPT_NAME} <options>
 
 Examples:
 ========
+# Test a 10 MB upload 10 times
 $ ${SCRIPT_NAME} --url https://server.company.org \\
                  --user admin --password password1x \\
                  --repo generic-tests \\
