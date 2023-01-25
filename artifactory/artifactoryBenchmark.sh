@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Benchmark Artifactory uploads and downloads
-
+#set -x
 SCRIPT_NAME=$0
 
 # Set some defaults
@@ -54,11 +54,19 @@ processOptions () {
     while [[ $# -gt 0 ]]; do
         case "$1" in
             -l | --url)
-                ART_URL="$2"
+                ART_URL="$2/artifactory"
                 shift 2
             ;;
             -r | --repo | --repository)
                 REPO="$2"
+                shift 2
+            ;;
+            -u | --user)
+                USER="$2"
+                shift 2
+            ;;
+            -p | --pass | --password)
+                PASS="$2"
                 shift 2
             ;;
             -s | --size)
@@ -105,7 +113,7 @@ testArtifactory () {
 
 createTestRepository () {
     echo -n "Creating test repository ${REPO}... "
-    curl -f -s -k -u ${USER}:${PASS} -X PUT "${ART_URL}/api/repositories/${REPO}" -H 'Content-Type: application/json' -d "{\"key\":\"${REPO}\",\"rclass\":\"local\",\"packageType\":\"generic\",\"description\":\"Generic local repository for benchmarks\"}" || errorExit "Creating repository ${REPO} failed"
+    curl -f -s -k -u ${USER}:${PASS} -X PUT "${ART_URL}/api/repositories/${REPO}" -o ./logs/create-repository.log -H 'Content-Type: application/json' -d "{\"key\":\"${REPO}\",\"rclass\":\"local\",\"packageType\":\"generic\",\"description\":\"Generic local repository for benchmarks\"}" || errorExit "Creating repository ${REPO} failed"
 }
 
 deleteTestRepository () {
@@ -146,7 +154,7 @@ deleteTestFile () {
 }
 
 printResults () {
-    echo "Results in ./logs/${TEST}-results.csv"
+    echo "Results from ./logs/${TEST}-results.csv"
     echo "==============================================="
     cat "./logs/${TEST}-results.csv"
     echo "==============================================="
@@ -161,11 +169,10 @@ downloadTest () {
     for ((i=1; i <= ${ITERATIONS}; i++)); do
         echo -n "$i, $TEST, " >> "./logs/${TEST}-results.csv"
         curl -L -k -s -f -u ${USER}:${PASS} -X GET "${FULL_PATH}" -o /dev/null --write-out '%{size_download}, %{http_code}, %{time_total}, %{time_connect}, %{speed_download}\n' >> "./logs/${TEST}-results.csv"
+        echo -n "."
     done
-
-    echo "Results in ./logs/${TEST}-results.csv:"
-    cat "./logs/${TEST}-results.csv"
-
+    echo
+    echo "Done"
     deleteTestFile
     printResults
 }
@@ -179,9 +186,9 @@ uploadTest () {
     for ((i=1; i <= ITERATIONS; i++)); do
         createFile "${test_file}"
         echo -n "$i, $TEST, " >> "./logs/${TEST}-results.csv"
-        curl -f -k -s -u ${USER}:${PASS} -X PUT -T ./${test_file} "${FULL_PATH}" -o /dev/null --write-out '%{size_upload}, %{http_code}, %{time_total}, %{time_connect}, %{speed_download}\n' >> "./logs/${TEST}-results.csv"
+        curl -f -k -s -u ${USER}:${PASS} -X PUT -T ./${test_file} "${FULL_PATH}" -o /dev/null --write-out '%{size_upload}, %{http_code}, %{time_total}, %{time_connect}, %{speed_upload}\n' >> "./logs/${TEST}-results.csv"
     done
-
+    echo "Done"
     deleteTestFile
     printResults
 }
