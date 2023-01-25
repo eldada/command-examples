@@ -98,10 +98,6 @@ processOptions () {
 }
 
 testArtifactory () {
-    echo -n "Check Artifactory is accessible... "
-    curl -f -k -i "${ART_URL}" > ./logs/check-accessible.log 2>&1 || errorExit "Artifactory is not accessible on ${ART_URL}"
-    echo "success"
-
     echo -n "Check Artifactory readiness... "
     curl -f -s -k "${ART_URL}/api/v1/system/readiness" -o ./logs/check-readiness.log || errorExit "Artifactory readiness failed"
     echo "success"
