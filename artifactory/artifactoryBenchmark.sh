@@ -160,7 +160,7 @@ downloadTest () {
     # Create and upload the file to be used for the download tests
     createAndUploadTestFile
 
-    echo "Starting the download loop"
+    echo "Starting the downloads loop"
     echo "Run #, Test, Download size (bytes), Http response code, Total time (sec), Connect time (sec), Speed (bytes/sec)" > "./logs/${TEST}-results.csv"
     for ((i=1; i <= ${ITERATIONS}; i++)); do
         echo -n "$i, $TEST, " >> "./logs/${TEST}-results.csv"
@@ -177,7 +177,7 @@ uploadTest () {
     local test_file="test${SIZE_MB}MB"
     FULL_PATH="${ART_URL}/${REPO}/${test_file}"
 
-    echo "Starting the upload loop"
+    echo "Starting the uploads loop"
     echo "Run #, Test, Upload size (bytes), Http response code, Total time (sec), Connect time (sec), Speed (bytes/sec)" > "./logs/${TEST}-results.csv"
     for ((i=1; i <= ITERATIONS; i++)); do
         createFile "${test_file}"
