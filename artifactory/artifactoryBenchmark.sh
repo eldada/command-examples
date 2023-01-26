@@ -166,7 +166,7 @@ printResults () {
 
 downloadTest () {
     local test=download
-    echo -e "\n===== DOWNLOADS TEST ====="
+    echo -e "\n======== DOWNLOADS TEST ========"
 
     # Create and upload the file to be used for the download tests
     createAndUploadTestFile
@@ -187,7 +187,7 @@ uploadTest () {
     local test_file="test${SIZE_MB}MB"
     FULL_PATH="${ART_URL}/${REPO}/${test_file}"
 
-    echo -e "\n===== UPLOADS TEST ====="
+    echo -e "\n========= UPLOADS TEST ========="
     echo "Creating $SIZE_MB MB test files and uploading"
     echo "Run #, Test, Upload size (bytes), Http response code, Total time (sec), Connect time (sec), Speed (bytes/sec)" > "./logs/${test}-results.csv"
     for ((i=1; i <= ITERATIONS; i++)); do
@@ -207,17 +207,17 @@ main () {
     rm -rf ./logs
     mkdir -p ./logs
 
-    echo -e "\n============================="
+    echo -e "\n================================"
     echo "Server      $ART_URL"
     echo "Tests       $TEST"
     echo "User        $USER"
     echo "Repository  $REPO"
     echo "File size   $SIZE_MB MB"
     echo "Iterations  $ITERATIONS"
-    echo "============================="
+    echo "================================"
     testArtifactory
     createTestRepository
-    echo "============================="
+    echo "================================"
 
     case ${TEST} in
         download)
