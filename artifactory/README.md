@@ -2,7 +2,7 @@
 A collection of commands and scripts I use to automate some tasks with [JFrog Artifactory](https://jfrog.com/artifactory/)
 
 ## Scripts
-* [artifactoryBenchmark.sh](artifactoryBenchmark.sh) - Run download or upload tests on a single file for a given size and iterations count. Results as CSV
+* [artifactoryBenchmark.sh](artifactoryBenchmark.sh) - Run download, upload (or both) tests with a single file for a given size and iterations count. Results as CSV
 * [artifactoryDownloadsLoop.sh](artifactoryDownloadsLoop.sh) - Create and upload a single generic binary generic file to Artifactory and download it in loops with set iterations and parallel threads
 
 ## Run Artifactory
