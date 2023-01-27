@@ -77,3 +77,9 @@ kubectl exec -it mysql-0 -- bash
 # Inside the container, connect to the database
 mysql --host=localhost --user=artifactory --password=password1 artifactory
 ```
+
+#### With a memory emptyDir volume as cache-fs
+Install with Artifactory's embedded database Derby
+```shell
+helm upgrade --install artifactory jfrog/artifactory -f values-examples/values-memory-cache-fs.yaml 
+```

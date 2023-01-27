@@ -1,0 +1,40 @@
+# Disable PostgreSQL
+postgresql:
+  enabled: false
+
+# Disable Nginx
+nginx:
+  enabled: false
+
+artifactory:
+  # Set Artifactory service to LoadBalancer as Nginx is disabled
+  service:
+    type: LoadBalancer
+
+  # Add a custom emptyDir volume using the host memory
+  customVolumes: |
+    - name: cache-memory-fs
+      emptyDir:
+        sizeLimit: 50Gi
+        medium: "Memory"
+
+  # Mount the custom volume to a dedicated path
+  customVolumeMounts: |
+    - name: cache-memory-fs
+      mountPath: /data/cache
+
+  # Adjust cache size and path
+  persistence:
+    # Make sure this is not bigger than the custom volume's sizeLimit
+    maxCacheSize: 50000000000
+
+    # Must match the custom volume's mountPath
+    cacheProviderDir: /data/cache
+
+    # Enable cache if using the fileSystem binary provider
+    # Will be ignored with other providers that have the cache-fs enabled by default
+    fileSystem:
+      cache:
+        enabled: true
+
+splitServicesToContainers: true
