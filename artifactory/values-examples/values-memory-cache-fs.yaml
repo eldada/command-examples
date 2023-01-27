@@ -1,3 +1,7 @@
+# IMPORTANT: The memory used by the volume is counted against your container's memory limit!
+# So you need to adjust the artifactory container's memory limit to
+# <original limit> + <custom volume sizeLimit>
+
 # Disable PostgreSQL
 postgresql:
   enabled: false

@@ -79,7 +79,11 @@ mysql --host=localhost --user=artifactory --password=password1 artifactory
 ```
 
 #### With a memory emptyDir volume as cache-fs
-Install with Artifactory's embedded database Derby
+Install with a [memory backed emptyDir](https://kubernetes.io/docs/concepts/storage/volumes/#emptydir) for [cache-fs](https://www.jfrog.com/confluence/display/JFROG/Cached+Filesystem+Binary+Provider)
+
+**IMPORTANT: The memory used by the volume is counted against your container's memory limit!**</br>
+**So you need to adjust the artifactory container's memory limit to <original limit> + <custom volume sizeLimit>**
+
 ```shell
 helm upgrade --install artifactory jfrog/artifactory -f values-examples/values-memory-cache-fs.yaml 
 ```
