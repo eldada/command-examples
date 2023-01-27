@@ -198,6 +198,7 @@ uploadTest () {
     done
     echo
     echo "Done"
+    rm -f "${test_file}"
     deleteTestFile
     printResults ${test}
 }
