@@ -100,6 +100,7 @@ processOptions () {
 
     # Add the artifactory context to the ART_URL if missing
     if [[ ! ${ART_URL} =~ \/artifactory\/?$ ]]; then
+        ART_URL="${ART_URL%/}"
         ART_URL="${ART_URL}/artifactory"
     fi
 }
@@ -170,6 +171,7 @@ downloadTest () {
 
     # Create and upload the file to be used for the download tests
     createAndUploadTestFile
+    echo "Running $ITERATIONS serial downloads"
     echo "Run #, Test, Download size (bytes), Http response code, Total time (sec), Connect time (sec), Speed (bytes/sec)" > "./logs/${test}-results.csv"
     for ((i=1; i <= ${ITERATIONS}; i++)); do
         echo -n "$i, $test, " >> "./logs/${test}-results.csv"
@@ -190,6 +192,7 @@ uploadTest () {
     echo -e "\n========= UPLOADS TEST ========="
     echo "Creating $SIZE_MB MB test files and uploading"
     echo "Run #, Test, Upload size (bytes), Http response code, Total time (sec), Connect time (sec), Speed (bytes/sec)" > "./logs/${test}-results.csv"
+    echo "Running $ITERATIONS serial uploads"
     for ((i=1; i <= ITERATIONS; i++)); do
         createFile "${test_file}"
         echo -n "$i, $test, " >> "./logs/${test}-results.csv"
