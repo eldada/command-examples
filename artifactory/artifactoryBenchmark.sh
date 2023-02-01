@@ -110,9 +110,8 @@ testArtifactory () {
     curl -f -s -k "${ART_URL}/api/v1/system/readiness" -o ./logs/check-readiness.log || errorExit "Artifactory readiness failed"
     echo "success"
 
-    echo -n "Check repository ${REPO} does not exist... "
-    curl -f -s -k -u ${USER}:${PASS} "${ART_URL}/api/repositories/${REPO}" -o ./logs/check-repository.log && errorExit "Repository ${REPO} already exists. Remove it and try again"
-    echo "success"
+    echo -n "Delete repository ${REPO} if exists... "
+    curl -f -s -k -u ${USER}:${PASS} "${ART_URL}/api/repositories/${REPO}" -o ./logs/check-repository.log && deleteTestRepository || echo "repository does not exist"
 }
 
 createTestRepository () {
