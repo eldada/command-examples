@@ -27,7 +27,7 @@ usage () {
 Usage: ${SCRIPT_NAME} <options>
 
 -l | --url                             : Artifactory URL                            (defaults to ${ART_URL})
--u | --user                            : Artifactory user                           (defaults to ${USER})
+-u | --user | --username               : Artifactory user                           (defaults to ${USER})
 -p | --pass | --password               : Artifactory password, API key or token     (defaults to ${PASS})
 -r | --repo | --repository             : Repository                                 (defaults to ${REPO})
 -s | --size                            : Size in MB                                 (defaults to ${SIZE_MB})
@@ -64,7 +64,7 @@ processOptions () {
                 REPO="$2"
                 shift 2
             ;;
-            -u | --user)
+            -u | --user | --username)
                 USER="$2"
                 shift 2
             ;;
