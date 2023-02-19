@@ -78,7 +78,7 @@ kubectl exec -it mysql-0 -- bash
 mysql --host=localhost --user=artifactory --password=password1 artifactory
 ```
 
-#### With a memory emptyDir volume as cache-fs
+#### With a memory based emptyDir volume as cache-fs
 Install with a [memory backed emptyDir](https://kubernetes.io/docs/concepts/storage/volumes/#emptydir) for [cache-fs](https://www.jfrog.com/confluence/display/JFROG/Cached+Filesystem+Binary+Provider)
 
 **IMPORTANT: The memory used by the volume is counted against your container's memory limit!**</br>
