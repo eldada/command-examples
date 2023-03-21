@@ -1,8 +1,12 @@
 # Commands example
+
 This is a repository with a collection of useful commands, scripts and examples for easy copy -> paste
 
 # Table of contents
+
 * [Linux](#linux)
+  * [Examples](#examples)
+  * [The proc directory](#the-proc-directory)
   * [Screen](#screen)
   * [Sysbench](#sysbench)
   * [Apache Bench](#apache-bench)
@@ -15,6 +19,9 @@ This is a repository with a collection of useful commands, scripts and examples 
 * [Contribute](#contribute)
 
 ## Linux
+
+### Examples
+
 * Clear memory cache
 ```shell script
 sync && echo 3 | sudo tee /proc/sys/vm/drop_caches
@@ -107,7 +114,8 @@ To get process info using its PID or search string: Command line, environment va
 
 * Add file to WAR file [addFileToWar.sh](scripts/addFileToWar.sh)
 
-### The /proc
+### The proc directory
+
 The `/proc` file system has all the information about the running processes. See full description in the [proc man page](https://man7.org/linux/man-pages/man5/proc.5.html).
 
 * Get a process command line (see usage in [procInfo.sh](scripts/procInfo.sh))
@@ -133,6 +141,7 @@ cut -d" " -f 1,2,42 /proc/[0-9]*/stat | sort -n -k 3 | tail -10
 ```
 
 ### Screen
+
 * Full source in this [gist](https://gist.github.com/jctosta/af918e1618682638aa82)
 * `screen` [MacOS man page](https://ss64.com/osx/screen.html) and [bash man page](https://ss64.com/bash/screen.html)
 * The `screen` command quick reference
@@ -192,6 +201,7 @@ sysbench --test=fileio --file-test-mode=seqwr run
 ```
 
 ### Apache Bench
+
 From the [Apache HTTP server benchmarking tool](http://httpd.apache.org/docs/2.4/programs/ab.html) page: "`ab` is a tool for benchmarking your Apache Hypertext Transfer Protocol (HTTP) server."
 
 ```shell script
@@ -199,7 +209,16 @@ From the [Apache HTTP server benchmarking tool](http://httpd.apache.org/docs/2.4
 ab -n 100 -c 10 http://www.jfrog.com/
 ```
 
+### Load generator
+
+A simple [createLoad.sh](scripts/createLoad.sh) script to create disk IO and CPU load in the current environment. This script just creates and deletes files in a temp directory which strains the CPU and disk IO.<br>
+**WARNING:** Running this script with many threads can bring a system to a halt or even crash it. USE WITH CARE!
+```shell script
+./createLoad.sh --threads 10
+```
+
 ## Git
+
 * Rebasing a branch on master
 ```shell script
 # Update local copy of master
@@ -231,6 +250,7 @@ git commit -s -m "Your commit message"
 ```
 
 ## Java
+
 Some useful commands for debugging a `java` process
 ```shell script
 # Go to the java/bin directory
@@ -264,6 +284,7 @@ PID=$(ps -ef | grep java | grep -v grep | awk '{print $2}')
 ```
 
 ## Docker
+
 * Allow a user to run docker commands without sudo
 ```shell script
 sudo usermod -aG docker user
@@ -339,12 +360,14 @@ bash -c "</dev/tcp/localhost/8081" 2>/dev/null
 ```
 
 ### Tools
+
 A collection of useful Docker tools
 * A simple terminal UI for Docker and docker-compose: [lazydocker](https://github.com/jesseduffield/lazydocker)
 * A web based UI for local and remote Docker: [Portainer](https://www.portainer.io/)
 * Analyse a Docker image with [dive](https://github.com/wagoodman/dive)
 
 ### My Dockerfiles
+
 A few `Dockerfile`s I use in my work
 * An Ubuntu with added tools and no root: [Dockerfile-ubuntu-with-tools](Dockerfiles/Dockerfile-ubuntu-with-tools)
 ```shell
@@ -352,7 +375,9 @@ docker build -f Dockerfile-ubuntu-with-tools -t eldada.jfrog.io/docker/ubuntu-wi
 ```
 
 ## Artifactory
+
 See Artifactory related scripts and examples in [artifactory](artifactory)
 
 ## Contribute
+
 Contributing is more than welcome with a pull request
