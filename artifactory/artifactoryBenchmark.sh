@@ -12,6 +12,7 @@ USER="admin"
 PASS="password"
 TEST=all
 ITERATIONS=5
+ERRORS_FOUND=false
 
 ######### Functions #########
 
@@ -166,6 +167,8 @@ printResults () {
 
 downloadTest () {
     local test=download
+    local results_line=
+    local results_array=()
     echo -e "\n======== DOWNLOADS TEST ========"
 
     # Create and upload the file to be used for the download tests
@@ -174,7 +177,15 @@ downloadTest () {
     echo "Run #, Test, Download size (bytes), Http response code, Total time (sec), Connect time (sec), Speed (bytes/sec)" > "./logs/${test}-results.csv"
     for ((i=1; i <= ${ITERATIONS}; i++)); do
         echo -n "$i, $test, " >> "./logs/${test}-results.csv"
-        curl -L -k -s -f -u ${USER}:${PASS} -X GET "${FULL_PATH}" -o /dev/null --write-out '%{size_download}, %{http_code}, %{time_total}, %{time_connect}, %{speed_download}\n' >> "./logs/${test}-results.csv"
+        results_line=$(curl -L -k -s -f -u ${USER}:${PASS} -X GET "${FULL_PATH}" -o /dev/null --write-out '%{size_download}, %{http_code}, %{time_total}, %{time_connect}, %{speed_download}\n')
+        echo "$results_line" >> "./logs/${test}-results.csv"
+        OLD_IFS=$IFS
+        IFS=', '; read -a results_array <<< "$results_line"
+        if [[ ! ${results_array[1]} =~ 20. ]]; then
+            echo -e "\nERROR: A non 20x http response code detected (${results_array[1]})"
+            ERRORS_FOUND=true
+        fi
+        IFS=$OLD_IFS
         echo -n "."
     done
     echo
@@ -186,6 +197,8 @@ downloadTest () {
 uploadTest () {
     local test=upload
     local test_file="test${SIZE_MB}MB"
+    local results_line=
+    local results_array=()
     FULL_PATH="${ART_URL}/${REPO}/${test_file}"
 
     echo -e "\n========= UPLOADS TEST ========="
@@ -195,7 +208,15 @@ uploadTest () {
     for ((i=1; i <= ITERATIONS; i++)); do
         createFile "${test_file}"
         echo -n "$i, $test, " >> "./logs/${test}-results.csv"
-        curl -f -k -s -u ${USER}:${PASS} -X PUT -T ./${test_file} "${FULL_PATH}" -o /dev/null --write-out '%{size_upload}, %{http_code}, %{time_total}, %{time_connect}, %{speed_upload}\n' >> "./logs/${test}-results.csv"
+        results_line=$(curl -f -k -s -u ${USER}:${PASS} -X PUT -T ./${test_file} "${FULL_PATH}" -o /dev/null --write-out '%{size_upload}, %{http_code}, %{time_total}, %{time_connect}, %{speed_upload}\n')
+        OLD_IFS=$IFS
+        IFS=', '; read -a results_array <<< "$results_line"
+        if [[ ! ${results_array[1]} =~ 20. ]]; then
+            echo -e "\nERROR: A non 20x http response code detected (${results_array[1]})"
+            ERRORS_FOUND=true
+        fi
+        IFS=$OLD_IFS
+        echo "$results_line" >> "./logs/${test}-results.csv"
         echo -n "."
     done
     echo
@@ -236,6 +257,10 @@ main () {
     esac
 
     deleteTestRepository
+    
+    if [[ ${ERRORS_FOUND} =~ true ]]; then
+        echo -e "\nERROR: Errors found in some of the tests. Review http response codes in the results"
+    fi
     echo
 }
 

@@ -373,7 +373,12 @@ A collection of useful Docker tools
 A few `Dockerfile`s I use in my work
 * An Ubuntu with added tools and no root: [Dockerfile-ubuntu-with-tools](Dockerfiles/Dockerfile-ubuntu-with-tools)
 ```shell
+# For a local build
 docker build -f Dockerfile-ubuntu-with-tools -t eldada.jfrog.io/docker/ubuntu-with-tools:22.10 .
+
+# Multi arch build and push
+docker buildx build --platform linux/amd64,linux/arm64 -f Dockerfile-ubuntu-with-tools -t eldada.jfrog.io/docker/ubuntu-with-tools:22.10 --push
+
 ```
 
 ## Artifactory
