@@ -9,13 +9,13 @@ LOGS_DIR="${SCRIPT_DIR}/${SCRIPT_NAME}-logs"
 
 # Set some defaults
 ART_URL=http://localhost
-REPO="benchmark-tests"
 SIZE_MB=1
 USER="admin"
 PASS="password"
 TEST=all
 ITERATIONS=2
 NUMBER_OF_THREADS=2
+SEED=${RANDOM}
 
 ######### Functions #########
 
@@ -126,7 +126,7 @@ testLoop () {
         echo "--- Iteration ${i}. Starting ${NUMBER_OF_THREADS} parallel threads"
         for ((j = 1; j <= ${NUMBER_OF_THREADS}; j++)); do
             ${ART_BENCH_SCRIPT} --url "${ART_URL}" --user "${USER}" --password "${PASS}" \
-                --repo "${repo_name}-${i}-${j}" --test "${TEST}" --size "${SIZE_MB}" --iterations "${ITERATIONS}" \
+                --repo "${repo_name}-${i}-${j}-${SEED}" --test "${TEST}" --size "${SIZE_MB}" --iterations "${ITERATIONS}" \
                 --logs ${LOGS_DIR}/load-${i}-${j} --skip-readiness-test >"${LOGS_DIR}/${repo_name}-${j}.log" 2>&1 &
             pid_array[$j]=$!
         done
