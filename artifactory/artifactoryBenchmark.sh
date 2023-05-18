@@ -16,6 +16,8 @@ TEST=all
 ITERATIONS=5
 SKIP_READINESS=false
 ERRORS_FOUND=false
+SEED=${RANDOM}
+TEST_FILE=
 
 ######### Functions #########
 
@@ -115,30 +117,33 @@ processOptions () {
         ART_URL="${ART_URL%/}"
         ART_URL="${ART_URL}/artifactory"
     fi
+
+    # Set a global, unique test file
+    TEST_FILE="test${SIZE_MB}MB_${SEED}"
 }
 
 testArtifactory () {
     [[ ${SKIP_READINESS} =~ true ]] && return
 
     echo -n "Check Artifactory readiness... "
-    curl -f -s -k "${ART_URL}/api/v1/system/readiness" -o ${LOGS_DIR}/check-readiness.log || errorExit "Artifactory readiness failed"
+    curl --connect-timeout 3 -f -s -k "${ART_URL}/api/v1/system/readiness" -o ${LOGS_DIR}/check-readiness.log || errorExit "Artifactory readiness failed"
     echo "success"
 }
 
 cleanArtifactory () {
     echo -n "Delete repository ${REPO} if exists... "
-    curl -f -s -k -u ${USER}:${PASS} "${ART_URL}/api/repositories/${REPO}" -o ${LOGS_DIR}/check-repository.log && deleteTestRepository || echo "repository does not exist"
+    curl --connect-timeout 3 -f -s -k -u ${USER}:${PASS} "${ART_URL}/api/repositories/${REPO}" -o ${LOGS_DIR}/check-repository.log && deleteTestRepository || echo "repository does not exist"
 }
 
 createTestRepository () {
     echo -n "Creating test repository ${REPO}... "
-    curl -f -s -k -u ${USER}:${PASS} -X PUT "${ART_URL}/api/repositories/${REPO}" -o ${LOGS_DIR}/create-repository.log -H 'Content-Type: application/json' -d "{\"key\":\"${REPO}\",\"rclass\":\"local\",\"packageType\":\"generic\",\"description\":\"Generic local repository for benchmarks\"}" || errorExit "Creating repository ${REPO} failed"
+    curl --connect-timeout 3 -f -s -k -u ${USER}:${PASS} -X PUT "${ART_URL}/api/repositories/${REPO}" -o ${LOGS_DIR}/create-repository.log -H 'Content-Type: application/json' -d "{\"key\":\"${REPO}\",\"rclass\":\"local\",\"packageType\":\"generic\",\"description\":\"Generic local repository for benchmarks\"}" || errorExit "Creating repository ${REPO} failed"
     echo "success"
 }
 
 deleteTestRepository () {
     echo -n "Deleting test repository ${REPO}... "
-    curl -f -s -k -u ${USER}:${PASS} -X DELETE "${ART_URL}/api/repositories/${REPO}"  || errorExit "Deleting repository ${REPO} failed"
+    curl --connect-timeout 3 -f -s -k -u ${USER}:${PASS} -X DELETE "${ART_URL}/api/repositories/${REPO}"  || errorExit "Deleting repository ${REPO} failed"
 }
 
 createFile () {
@@ -149,27 +154,25 @@ createFile () {
 }
 
 createAndUploadTestFile () {
-    local test_file="test${SIZE_MB}MB"
-    FULL_PATH="${ART_URL}/${REPO}/${test_file}"
+    FULL_PATH="${ART_URL}/${REPO}/${TEST_FILE}"
 
-    echo -n "Creating a $SIZE_MB MB file ${test_file}... "
-    createFile "${test_file}"
+    echo -n "Creating a $SIZE_MB MB file ${TEST_FILE}... "
+    createFile "${TEST_FILE}"
     echo "Done"
 
-    echo "Uploading ${test_file} to ${FULL_PATH}"
-    curl -f -k -s -u ${USER}:${PASS} -X PUT -T ./${test_file} "${FULL_PATH}" -o ${LOGS_DIR}/upload-out.log || errorExit "Uploading ${test_file} to ${FULL_PATH} failed"
+    echo "Uploading ${TEST_FILE} to ${FULL_PATH}"
+    curl --connect-timeout 3 -f -k -s -u ${USER}:${PASS} -X PUT -T ./${TEST_FILE} "${FULL_PATH}" -o ${LOGS_DIR}/upload-out.log || errorExit "Uploading ${TEST_FILE} to ${FULL_PATH} failed"
 
-    # Remove file
-    rm -f "${test_file}" || errorExit "Deleting $test_file failed"
+    # Remove local file
+    rm -f "${TEST_FILE}" || errorExit "Deleting ${TEST_FILE} failed"
 }
 
 deleteTestFile () {
-    local test_file="test${SIZE_MB}MB"
-    FULL_PATH="${ART_URL}/${REPO}/${test_file}"
+    FULL_PATH="${ART_URL}/${REPO}/${TEST_FILE}"
 
     # Delete test file
     echo "Deleting ${FULL_PATH}"
-    curl -f -k -s -u ${USER}:${PASS} -X DELETE "${FULL_PATH}" -o ${LOGS_DIR}/delete-out.log || errorExit "Deleting ${FULL_PATH} failed"
+    curl --connect-timeout 3 -f -k -s -u ${USER}:${PASS} -X DELETE "${FULL_PATH}" -o ${LOGS_DIR}/delete-out.log || errorExit "Deleting ${FULL_PATH} failed"
 }
 
 printResults () {
@@ -211,19 +214,18 @@ downloadTest () {
 
 uploadTest () {
     local test=upload
-    local test_file="test${SIZE_MB}MB"
     local results_line=
     local results_array=()
-    FULL_PATH="${ART_URL}/${REPO}/${test_file}"
+    FULL_PATH="${ART_URL}/${REPO}/${TEST_FILE}"
 
     echo -e "\n========= UPLOADS TEST ========="
     echo "Creating $SIZE_MB MB test files and uploading"
     echo "Run #, Test, Upload size (bytes), Http response code, Total time (sec), Connect time (sec), Speed (bytes/sec)" > "${LOGS_DIR}/${test}-results.csv"
     echo "Running $ITERATIONS serial uploads"
     for ((i=1; i <= ITERATIONS; i++)); do
-        createFile "${test_file}"
+        createFile "${TEST_FILE}"
         echo -n "$i, $test, " >> "${LOGS_DIR}/${test}-results.csv"
-        results_line=$(curl -f -k -s -u ${USER}:${PASS} -X PUT -T ./${test_file} "${FULL_PATH}" -o /dev/null --write-out '%{size_upload}, %{http_code}, %{time_total}, %{time_connect}, %{speed_upload}\n')
+        results_line=$(curl --connect-timeout 3 -f -k -s -u ${USER}:${PASS} -X PUT -T ./${TEST_FILE} "${FULL_PATH}" -o /dev/null --write-out '%{size_upload}, %{http_code}, %{time_total}, %{time_connect}, %{speed_upload}\n')
         OLD_IFS=$IFS
         IFS=', '; read -a results_array <<< "$results_line"
         if [[ ! ${results_array[1]} =~ 20. ]]; then
@@ -236,7 +238,7 @@ uploadTest () {
     done
     echo
     echo "Done"
-    rm -f "${test_file}"
+    rm -f "${TEST_FILE}"
     deleteTestFile
     printResults ${test}
 }

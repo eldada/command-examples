@@ -44,13 +44,13 @@ Examples:
 # Test with all defaults - downloads and uploads
 $ ${SCRIPT_NAME}
 
-# Test a 10 MB upload 10 times with 4 parallel processes
+# Test a 10 MB upload 10 times with 5 parallel processes
 $ ${SCRIPT_NAME} --url https://server.company.org \\
                  --user admin --password password1x \\
                  --test upload \\
                  --size 10 \\
                  --iterations 10 \\
-                 --number-of-threads 4
+                 --number-of-threads 5
 END_USAGE
 
     exit 1
@@ -109,7 +109,7 @@ processOptions () {
 
 testArtifactory () {
     echo -n "Check Artifactory readiness... "
-    curl -f -s -k "${ART_URL}/api/v1/system/readiness" -o ${LOGS_DIR}/check-readiness.log || errorExit "Artifactory readiness failed"
+    curl --connect-timeout 3 -f -s -k "${ART_URL}/api/v1/system/readiness" -o ${LOGS_DIR}/check-readiness.log || errorExit "Artifactory readiness failed. Check ${LOGS_DIR}/check-readiness.log"
     echo "success"
 }
 
@@ -117,7 +117,11 @@ testLoop () {
     local pid_array=()
     local repo_name=load-repo
 
+    echo "##################################################################################################"
     echo "Starting the load loop of ${ITERATIONS} iterations with ${NUMBER_OF_THREADS} parallel processes"
+    echo "Running test ${TEST}"
+    echo "Using ${SIZE_MB} MB file size as payload"
+    echo "##################################################################################################"
     for ((i = 1; i <= ${ITERATIONS}; i++)); do
         echo "--- Iteration ${i}. Starting ${NUMBER_OF_THREADS} parallel threads"
         for ((j = 1; j <= ${NUMBER_OF_THREADS}; j++)); do
@@ -129,7 +133,14 @@ testLoop () {
         echo "Waiting for ${#pid_array[@]} processes (${pid_array[@]})"
         wait
     done
-}    
+}
+
+checkForErrors () {
+    echo "##################################################################################################"
+    echo "Checking for errors in the logs"
+    grep -r ERROR ${LOGS_DIR}
+    echo "##################################################################################################"
+}
 
 main () {
     [[ -f ${ART_BENCH_SCRIPT} ]] || errorExit "Script ${ART_BENCH_SCRIPT} not found"
@@ -138,6 +149,8 @@ main () {
     mkdir -p "${LOGS_DIR}"
     testArtifactory
     testLoop
+    checkForErrors
+    echo "Done"
 }
 
 main "$@"
