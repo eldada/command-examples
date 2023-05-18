@@ -3,6 +3,8 @@
 # Benchmark Artifactory uploads and downloads
 #set -x
 SCRIPT_NAME=$0
+SCRIPT_DIR=$(dirname ${SCRIPT_NAME})
+LOGS_DIR="${SCRIPT_DIR}/${SCRIPT_NAME}-logs"
 
 # Set some defaults
 ART_URL=http://localhost
@@ -12,13 +14,16 @@ USER="admin"
 PASS="password"
 TEST=all
 ITERATIONS=5
+SKIP_READINESS=false
 ERRORS_FOUND=false
+SEED=${RANDOM}
+TEST_FILE=
 
 ######### Functions #########
 
 errorExit () {
     echo -e "\nERROR: $1\n"
-    echo "Check logs under ./logs/"
+    echo "Check logs under ${LOGS_DIR}"
     exit 1
 }
 
@@ -34,8 +39,9 @@ Usage: ${SCRIPT_NAME} <options>
 -s | --size                            : Size in MB                                 (defaults to ${SIZE_MB})
 -i | --iterations                      : Number of test iterations                  (defaults to ${ITERATIONS})
 -t | --test                            : Test type (all|upload|download)            (defaults to ${TEST})
+-d | --logs                            : Logs directory                             (defaults to ${LOGS_DIR})
 -h | --help                            : Show this usage.
---no-headers                           : Don't print headers line.
+--skip-readiness-test                  : Skip the Artifactory readiness test
 
 Examples:
 ========
@@ -85,9 +91,16 @@ processOptions () {
                 TEST="$2"
                 shift 2
             ;;
+            -d | --logs)
+                LOGS_DIR="$2"
+                shift 2
+            ;;
+            --skip-readiness-test)
+                SKIP_READINESS=true
+                shift 1
+            ;;
             -h | --help)
                 usage
-                exit 0
             ;;
             *)
                 usage
@@ -104,64 +117,69 @@ processOptions () {
         ART_URL="${ART_URL%/}"
         ART_URL="${ART_URL}/artifactory"
     fi
+
+    # Set a global, unique test file
+    TEST_FILE="test${SIZE_MB}MB_${SEED}"
 }
 
 testArtifactory () {
-    echo -n "Check Artifactory readiness... "
-    curl -f -s -k "${ART_URL}/api/v1/system/readiness" -o ./logs/check-readiness.log || errorExit "Artifactory readiness failed"
-    echo "success"
+    [[ ${SKIP_READINESS} =~ true ]] && return
 
+    echo -n "Check Artifactory readiness... "
+    curl --connect-timeout 3 -f -s -k "${ART_URL}/api/v1/system/readiness" -o ${LOGS_DIR}/check-readiness.log || errorExit "Artifactory readiness failed"
+    echo "success"
+}
+
+cleanArtifactory () {
     echo -n "Delete repository ${REPO} if exists... "
-    curl -f -s -k -u ${USER}:${PASS} "${ART_URL}/api/repositories/${REPO}" -o ./logs/check-repository.log && deleteTestRepository || echo "repository does not exist"
+    curl --connect-timeout 3 -f -s -k -u ${USER}:${PASS} "${ART_URL}/api/repositories/${REPO}" -o ${LOGS_DIR}/check-repository.log && deleteTestRepository || echo "repository does not exist"
 }
 
 createTestRepository () {
     echo -n "Creating test repository ${REPO}... "
-    curl -f -s -k -u ${USER}:${PASS} -X PUT "${ART_URL}/api/repositories/${REPO}" -o ./logs/create-repository.log -H 'Content-Type: application/json' -d "{\"key\":\"${REPO}\",\"rclass\":\"local\",\"packageType\":\"generic\",\"description\":\"Generic local repository for benchmarks\"}" || errorExit "Creating repository ${REPO} failed"
+    curl --connect-timeout 3 -f -s -k -u ${USER}:${PASS} -X PUT "${ART_URL}/api/repositories/${REPO}" -o ${LOGS_DIR}/create-repository.log -H 'Content-Type: application/json' -d "{\"key\":\"${REPO}\",\"rclass\":\"local\",\"packageType\":\"generic\",\"description\":\"Generic local repository for benchmarks\"}" || errorExit "Creating repository ${REPO} failed"
     echo "success"
 }
 
 deleteTestRepository () {
     echo -n "Deleting test repository ${REPO}... "
-    curl -f -s -k -u ${USER}:${PASS} -X DELETE "${ART_URL}/api/repositories/${REPO}"  || errorExit "Deleting repository ${REPO} failed"
+    curl --connect-timeout 3 -f -s -k -u ${USER}:${PASS} -X DELETE "${ART_URL}/api/repositories/${REPO}"  || errorExit "Deleting repository ${REPO} failed"
 }
 
 createFile () {
     local test_file="$1"
 
     # Create a unique binary, generic file
-    dd if=/dev/urandom of="${test_file}" bs=1048576 count="${SIZE_MB}" > ./logs/create-file.log 2>&1 || errorExit "Creating file ${test_file} failed"
+    dd if=/dev/urandom of="${test_file}" bs=1048576 count="${SIZE_MB}" > ${LOGS_DIR}/create-file.log 2>&1 || errorExit "Creating file ${test_file} failed"
 }
 
 createAndUploadTestFile () {
-    local test_file="test${SIZE_MB}MB"
-    FULL_PATH="${ART_URL}/${REPO}/${test_file}"
+    FULL_PATH="${ART_URL}/${REPO}/${TEST_FILE}"
 
-    echo -n "Creating a $SIZE_MB MB file ${test_file}... "
-    createFile "${test_file}"
+    echo -n "Creating a $SIZE_MB MB file ${TEST_FILE}... "
+    createFile "${TEST_FILE}"
     echo "Done"
 
-    echo "Uploading ${test_file} to ${FULL_PATH}"
-    curl -f -k -s -u ${USER}:${PASS} -X PUT -T ./${test_file} "${FULL_PATH}" -o ./logs/upload-out.log || errorExit "Uploading ${test_file} to ${FULL_PATH} failed"
+    echo "Uploading ${TEST_FILE} to ${FULL_PATH}"
+    curl --connect-timeout 3 -f -k -s -u ${USER}:${PASS} -X PUT -T ./${TEST_FILE} "${FULL_PATH}" -o ${LOGS_DIR}/upload-out.log || errorExit "Uploading ${TEST_FILE} to ${FULL_PATH} failed"
 
-    # Remove file
-    rm -f "${test_file}" || errorExit "Deleting $test_file failed"
+    # Remove local file
+    rm -f "${TEST_FILE}" || errorExit "Deleting ${TEST_FILE} failed"
 }
 
 deleteTestFile () {
-    local test_file="test${SIZE_MB}MB"
-    FULL_PATH="${ART_URL}/${REPO}/${test_file}"
+    FULL_PATH="${ART_URL}/${REPO}/${TEST_FILE}"
 
     # Delete test file
     echo "Deleting ${FULL_PATH}"
-    curl -f -k -s -u ${USER}:${PASS} -X DELETE "${FULL_PATH}" -o ./logs/delete-out.log || errorExit "Deleting ${FULL_PATH} failed"
+    curl --connect-timeout 3 -f -k -s -u ${USER}:${PASS} -X DELETE "${FULL_PATH}" -o ${LOGS_DIR}/delete-out.log || errorExit "Deleting ${FULL_PATH} failed"
 }
 
 printResults () {
     local test=$1
-    echo "Results from ./logs/${test}-results.csv"
+    echo "Results from ${LOGS_DIR}/${test}-results.csv"
     echo "======================================== CSV START ================================================="
-    cat "./logs/${test}-results.csv"
+    cat "${LOGS_DIR}/${test}-results.csv"
     echo "========================================  CSV END  ================================================="
 }
 
@@ -174,11 +192,11 @@ downloadTest () {
     # Create and upload the file to be used for the download tests
     createAndUploadTestFile
     echo "Running $ITERATIONS serial downloads"
-    echo "Run #, Test, Download size (bytes), Http response code, Total time (sec), Connect time (sec), Speed (bytes/sec)" > "./logs/${test}-results.csv"
+    echo "Run #, Test, Download size (bytes), Http response code, Total time (sec), Connect time (sec), Speed (bytes/sec)" > "${LOGS_DIR}/${test}-results.csv"
     for ((i=1; i <= ${ITERATIONS}; i++)); do
-        echo -n "$i, $test, " >> "./logs/${test}-results.csv"
+        echo -n "$i, $test, " >> "${LOGS_DIR}/${test}-results.csv"
         results_line=$(curl -L -k -s -f -u ${USER}:${PASS} -X GET "${FULL_PATH}" -o /dev/null --write-out '%{size_download}, %{http_code}, %{time_total}, %{time_connect}, %{speed_download}\n')
-        echo "$results_line" >> "./logs/${test}-results.csv"
+        echo "$results_line" >> "${LOGS_DIR}/${test}-results.csv"
         OLD_IFS=$IFS
         IFS=', '; read -a results_array <<< "$results_line"
         if [[ ! ${results_array[1]} =~ 20. ]]; then
@@ -196,19 +214,18 @@ downloadTest () {
 
 uploadTest () {
     local test=upload
-    local test_file="test${SIZE_MB}MB"
     local results_line=
     local results_array=()
-    FULL_PATH="${ART_URL}/${REPO}/${test_file}"
+    FULL_PATH="${ART_URL}/${REPO}/${TEST_FILE}"
 
     echo -e "\n========= UPLOADS TEST ========="
     echo "Creating $SIZE_MB MB test files and uploading"
-    echo "Run #, Test, Upload size (bytes), Http response code, Total time (sec), Connect time (sec), Speed (bytes/sec)" > "./logs/${test}-results.csv"
+    echo "Run #, Test, Upload size (bytes), Http response code, Total time (sec), Connect time (sec), Speed (bytes/sec)" > "${LOGS_DIR}/${test}-results.csv"
     echo "Running $ITERATIONS serial uploads"
     for ((i=1; i <= ITERATIONS; i++)); do
-        createFile "${test_file}"
-        echo -n "$i, $test, " >> "./logs/${test}-results.csv"
-        results_line=$(curl -f -k -s -u ${USER}:${PASS} -X PUT -T ./${test_file} "${FULL_PATH}" -o /dev/null --write-out '%{size_upload}, %{http_code}, %{time_total}, %{time_connect}, %{speed_upload}\n')
+        createFile "${TEST_FILE}"
+        echo -n "$i, $test, " >> "${LOGS_DIR}/${test}-results.csv"
+        results_line=$(curl --connect-timeout 3 -f -k -s -u ${USER}:${PASS} -X PUT -T ./${TEST_FILE} "${FULL_PATH}" -o /dev/null --write-out '%{size_upload}, %{http_code}, %{time_total}, %{time_connect}, %{speed_upload}\n')
         OLD_IFS=$IFS
         IFS=', '; read -a results_array <<< "$results_line"
         if [[ ! ${results_array[1]} =~ 20. ]]; then
@@ -216,20 +233,20 @@ uploadTest () {
             ERRORS_FOUND=true
         fi
         IFS=$OLD_IFS
-        echo "$results_line" >> "./logs/${test}-results.csv"
+        echo "$results_line" >> "${LOGS_DIR}/${test}-results.csv"
         echo -n "."
     done
     echo
     echo "Done"
-    rm -f "${test_file}"
+    rm -f "${TEST_FILE}"
     deleteTestFile
     printResults ${test}
 }
 
 main () {
     processOptions "$@"
-    rm -rf ./logs
-    mkdir -p ./logs
+    rm -rf "${LOGS_DIR}"
+    mkdir -p "${LOGS_DIR}"
 
     echo -e "\n================================"
     echo "Server      $ART_URL"
@@ -240,6 +257,7 @@ main () {
     echo "Iterations  $ITERATIONS"
     echo "================================"
     testArtifactory
+    cleanArtifactory
     createTestRepository
     echo "================================"
 
