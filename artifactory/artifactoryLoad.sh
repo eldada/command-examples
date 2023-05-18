@@ -137,8 +137,8 @@ testLoop () {
 
 checkForErrors () {
     echo "##################################################################################################"
-    echo "Checking for errors in the logs"
-    grep -r ERROR ${LOGS_DIR}
+    echo "Checking for errors in the logs..."
+    grep -r ERROR ${LOGS_DIR} || echo "No errors found"
     echo "##################################################################################################"
 }
 
