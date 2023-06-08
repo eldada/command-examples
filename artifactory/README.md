@@ -113,6 +113,7 @@ git clone https://github.com/eldada/command-examples.git
 cd command-examples/artifactory
 
 # Run the script(s) you want
+# NOTE - use the internal artifactory service rather than the external load balancer
 ./artifactoryBenchmark.sh --help
 
 ```
