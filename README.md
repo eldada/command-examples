@@ -68,6 +68,10 @@ See all supported variables in [curl.format.txt](files/curl.format.txt)
 # Example for getting http response code (variable http_code)
 curl -o /dev/null -s --write-out '%{http_code}' https://curl.haxx.se
 
+# Example for one-liner printout of several connection time parameters
+curl -w "\ndnslookup: %{time_namelookup} \nconnect: %{time_connect} \nappconnect: %{time_appconnect} \npretransfer: %{time_pretransfer} \nredirect: %{time_redirect} \nstarttransfer: %{time_starttransfer} \n---------\ntotal: %{time_total} \nsize: %{size_download}\n" \
+        -so /dev/null https://curl.haxx.se
+        
 # Example for printing all variables and their values by using an external file with the format
 curl -o /dev/null -s --write-out '@files/curl.format.txt' https://curl.haxx.se
 ```
