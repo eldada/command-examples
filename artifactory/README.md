@@ -98,6 +98,9 @@ First, upload a test file you want to use to a repository. After that, you can r
 # -n <num>: Number of requests to perform for the benchmarking session. The default is to just perform a single request which usually leads to non-representative benchmarking results.
 
 ab -A admin:password -c 10 -n 1000 http://localhost/artifactory/example-repo-local/example-file.bin
+
+# Use token instead of basic auth to download
+ab -H "Authorization: Bearer ${TOKEN}" -c 10 -n 1000 http://localhost/artifactory/example-repo-local/example-file.bin
 ```
 
 ### Using Scripts
