@@ -26,15 +26,9 @@ helm repo update
 ```
 
 #### Default install
-Install with Artifactory's default included database PostgreSQL
+Install with Artifactory's default bundled database PostgreSQL
 ```shell
 helm upgrade --install artifactory jfrog/artifactory 
-```
-
-#### With embedded Derby
-Install with Artifactory's embedded database Derby
-```shell
-helm upgrade --install artifactory jfrog/artifactory -f values-examples/values-derby.yaml 
 ```
 
 #### With external PostgreSQL
