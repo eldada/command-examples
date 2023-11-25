@@ -84,6 +84,23 @@ helm upgrade --install artifactory jfrog/artifactory -f values-examples/values-m
 ```
 
 ## Benchmark Artifactory
+Here are a couple of ways to benchmark Artifactory. This is very useful for comparing the impact of configuration changes on the performance of Artifactory
+
+### Using Apache ab
+Using [Apache ab](https://httpd.apache.org/docs/current/programs/ab.html) is useful for running multiple concurrent downloads of a single file.</br>
+Multiple instances of `ab` can be run to add more load and to combine multiple files and technologies
+
+First, upload a test file you want to use to a repository. After that, you can run
+```shell
+# From official ab docs:
+# -A username:password: Supply BASIC Authentication credentials to the server.
+# -c <num>: Number of multiple requests to perform at a time. Default is one request at a time.
+# -n <num>: Number of requests to perform for the benchmarking session. The default is to just perform a single request which usually leads to non-representative benchmarking results.
+
+ab -A admin:password -c 10 -n 1000 http://localhost/artifactory/example-repo-local/example-file.bin
+```
+
+### Using Scripts
 With the scripts [artifactoryBenchmark.sh](artifactoryBenchmark.sh) and [artifactoryLoad.sh](artifactoryLoad.sh) you can create load on Artifactory.
 
 Each script has its own usage you can get with
