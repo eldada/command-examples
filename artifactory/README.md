@@ -90,6 +90,7 @@ Here are a couple of ways to benchmark Artifactory. This is very useful for comp
 Using [Apache ab](https://httpd.apache.org/docs/current/programs/ab.html) is useful for running multiple concurrent downloads of a single file.</br>
 Multiple instances of `ab` can be run to add more load and to combine multiple files and technologies
 
+#### Downloads
 First, upload a test file you want to use to a repository. After that, you can run
 ```shell
 # From official ab docs:
@@ -97,10 +98,29 @@ First, upload a test file you want to use to a repository. After that, you can r
 # -c <num>: Number of multiple requests to perform at a time. Default is one request at a time.
 # -n <num>: Number of requests to perform for the benchmarking session. The default is to just perform a single request which usually leads to non-representative benchmarking results.
 
+# 10 concurrent downloads with a total of 1000 requests
 ab -A admin:password -c 10 -n 1000 http://localhost/artifactory/example-repo-local/example-file.bin
 
-# Use token instead of basic auth to download
+# Use a token instead of basic auth to download
 ab -H "Authorization: Bearer ${TOKEN}" -c 10 -n 1000 http://localhost/artifactory/example-repo-local/example-file.bin
+```
+
+#### Uploads
+**WARNING:** For upload tests, use a concurrent value of `1` to avoid errors!
+
+First, create a local file to be uploaded
+```shell
+# From official ab docs:
+# -A username:password: Supply BASIC Authentication credentials to the server.
+# -c <num>: Number of multiple requests to perform at a time. Default is one request at a time.
+# -n <num>: Number of requests to perform for the benchmarking session. The default is to just perform a single request which usually leads to non-representative benchmarking results.
+# -u <file>: File containing data to PUT.
+
+# 1 concurrent upload of a file 50 times
+ab -A admin:password -u ./file.bin -c 1 -n 50 http://localhost/artifactory/example-repo-local/file.bin
+
+# Use a token instead of basic auth to upload
+ab -H "Authorization: Bearer ${TOKEN}" -u ./file.bin -c 1 -n 50 http://localhost/artifactory/example-repo-local/file.bin
 ```
 
 ### Using Scripts
