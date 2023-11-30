@@ -132,7 +132,7 @@ Each script has its own usage you can get with
 ```
 
 ### Benchmark from a Pod
-You can run this from within a pod in Kubernetes
+You can run these tests from within a pod in Kubernetes
 ```shell
 # Deploy a pod with the needed tools
 kubectl apply -f https://github.com/eldada/kubernetes-scripts/raw/master/yaml/podWithTools.yaml
@@ -140,7 +140,9 @@ kubectl apply -f https://github.com/eldada/kubernetes-scripts/raw/master/yaml/po
 # Open a shell to the pod
 kubectl exec -it pod-with-tools --bash
 
-# Clone the repository with the scripts
+## You can use the load scripts from this repository, or directly the Apache ab utility, which is also installed in this pod
+
+# To use the scripts, clone this repository
 cd /opt
 git clone https://github.com/eldada/command-examples.git
 
@@ -149,5 +151,4 @@ cd command-examples/artifactory
 # Run the script(s) you want
 # NOTE - use the internal artifactory service rather than the external load balancer
 ./artifactoryBenchmark.sh --help
-
 ```
