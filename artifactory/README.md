@@ -25,13 +25,13 @@ helm repo add jfrog https://charts.jfrog.io
 helm repo update
 ```
 
-#### Default install
+#### Default Install
 Install with Artifactory's default bundled database PostgreSQL
 ```shell
 helm upgrade --install artifactory jfrog/artifactory 
 ```
 
-#### With external PostgreSQL
+#### With an External PostgreSQL (recommended)
 Install Artifactory with external PostgreSQL database in K8s
 ```shell
 # Add Bitnami helm repository
@@ -54,7 +54,7 @@ kubectl run pg-client --rm --tty -i --restart='Never' --image docker.io/bitnami/
     --env="PGPASSWORD=password1" --labels="postgresql-client=true" --command -- psql --host postgresql -U artifactory
 ```
 
-#### With external MySQL (deprecated)
+#### With an External MySQL (deprecated)
 Install Artifactory with external MySQL database in K8s (deprecated and will eventually not be supported)
 ```shell
 # Add Bitnami helm repository
