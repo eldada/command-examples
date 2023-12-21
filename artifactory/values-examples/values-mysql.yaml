@@ -1,3 +1,5 @@
+# IMPORTANT: It's recommended to use PostgreSQL as the Artifactory database!
+
 # Using a single yaml for two separate charts as there are no conflicting keys
 
 # MySQL properties for the mysql chart
