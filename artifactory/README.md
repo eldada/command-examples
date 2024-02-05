@@ -1,11 +1,6 @@
 # Artifactory
 A collection of commands and scripts I use to automate some tasks with [JFrog Artifactory](https://jfrog.com/artifactory/)
 
-## Scripts
-* [artifactoryBenchmark.sh](artifactoryBenchmark.sh) - Run download, upload (or both) tests with a single file for a given size and iterations count. Results as CSV
-* [artifactoryLoad.sh](artifactoryLoad.sh) - Run parallel processes of `artifactoryBenchmark.sh`. This is useful for generating load on Artifactory
-* [artifactoryDownloadsLoop.sh](artifactoryDownloadsLoop.sh) - Create and upload a single generic binary generic file to Artifactory and download it in loops with set iterations and parallel threads
-
 ## Run Artifactory
 ### Artifactory with local Docker
 You can easily spin up a local Artifactory container with
@@ -123,8 +118,10 @@ ab -A admin:password -u ./file.bin -c 1 -n 50 http://localhost/artifactory/examp
 ab -H "Authorization: Bearer ${TOKEN}" -u ./file.bin -c 1 -n 50 http://localhost/artifactory/example-repo-local/file.bin
 ```
 
-### Using Scripts
-With the scripts [artifactoryBenchmark.sh](artifactoryBenchmark.sh) and [artifactoryLoad.sh](artifactoryLoad.sh) you can create load on Artifactory.
+### Shell Scripts
+* [artifactoryBenchmark.sh](artifactoryBenchmark.sh) - Run download, upload (or both) tests with a single file for a given size and iterations count. Results as CSV
+* [artifactoryLoad.sh](artifactoryLoad.sh) - Run parallel processes of `artifactoryBenchmark.sh`. This is useful for generating load on Artifactory
+* [artifactoryDownloadsLoop.sh](artifactoryDownloadsLoop.sh) - Create and upload a single generic binary generic file to Artifactory and download it in loops with set iterations and parallel threads
 
 Each script has its own usage you can get with
 ```shell
