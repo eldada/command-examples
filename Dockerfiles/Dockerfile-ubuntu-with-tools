@@ -2,9 +2,7 @@
 FROM ubuntu:23.10
 
 # Install the tools and create the ubuntu user
-RUN apt update && \
-    apt install -y vim curl && \
-    useradd -ms /bin/bash ubuntu
+RUN apt update && apt install -y vim curl git jq apache2-utils
 
 # Switch to ubuntu user and /home/ubuntu working directory
 USER ubuntu
