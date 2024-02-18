@@ -1,0 +1,80 @@
+# Default values for artifactory-load.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: eldada.jfrog.io/docker/ubuntu-with-tools
+  pullPolicy: IfNotPresent
+  tag: "23.10"
+
+artifactory:
+  url: http://artifactory-server
+  auth: true
+  user: admin
+  password: password
+
+  # Must provide a file that already exists
+  file: repo/folder/file
+
+# Infinite loop or run once
+infinite: true
+
+# Number of requests to perform
+requests: 10
+
+# Number of parallel requests to make at a time
+concurrency: 2
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  fsGroup: 1000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          topologyKey: kubernetes.io/hostname
+          labelSelector:
+            matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - artifactory-load

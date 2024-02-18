@@ -118,6 +118,31 @@ ab -A admin:password -u ./file.bin -c 1 -n 50 http://localhost/artifactory/examp
 ab -H "Authorization: Bearer ${TOKEN}" -u ./file.bin -c 1 -n 50 http://localhost/artifactory/example-repo-local/file.bin
 ```
 
+#### Helm Chart
+You can use the [artifactory-load](helm/artifactory-load) helm chart to deploy one or more pods running `ab` once or in an infinite loop.
+
+Upload a file you want to use for testing. In this example: `generic/cody.jpg`
+Create a `test-value.yaml` with the specific details of your run
+```yaml
+replicaCount: 2
+
+artifactory:
+  url: http://artifactory-server
+  auth: true
+  user: admin
+  password: password
+  file: generic/cody.jpg
+
+infinite: true
+requests: 10000
+concurrency: 20
+```
+
+Deploy the chart with the command
+```shell
+helm upgrade --install al . -f test-values.yaml
+```
+
 ### Shell Scripts
 * [artifactoryBenchmark.sh](artifactoryBenchmark.sh) - Run download, upload (or both) tests with a single file for a given size and iterations count. Results as CSV
 * [artifactoryLoad.sh](artifactoryLoad.sh) - Run parallel processes of `artifactoryBenchmark.sh`. This is useful for generating load on Artifactory
