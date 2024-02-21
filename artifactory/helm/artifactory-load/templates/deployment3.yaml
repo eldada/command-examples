@@ -1,14 +1,15 @@
+{{ if .Values.deployment3.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "artifactory-load.fullname" . }}
+  name: {{ include "artifactory-load.fullname" . }}-3
   labels:
     app: {{ template "artifactory-load.name" . }}
     chart: {{ template "artifactory-load.chart" . }}
     heritage: {{ .Release.Service }}
     release: {{ .Release.Name }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.deployment3.replicaCount }}
   selector:
     matchLabels:
       app: {{ template "artifactory-load.name" . }}
@@ -52,13 +53,13 @@ spec:
             - name: ARTIFACTORY_PASSWORD
               value: "{{ .Values.artifactory.password }}"
             - name: FILE
-              value: "{{ .Values.artifactory.file }}"
+              value: "{{ .Values.deployment3.file }}"
             - name: AUTH
               value: "{{ .Values.artifactory.auth }}"
             - name: REQUESTS
-              value: "{{ .Values.requests }}"
+              value: "{{ .Values.deployment3.requests }}"
             - name: CONCURRENCY
-              value: "{{ .Values.concurrency }}"
+              value: "{{ .Values.deployment3.concurrency }}"
             - name: INFINITE
               value: "{{ .Values.infinite }}"
           resources:
@@ -84,3 +85,4 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+{{- end }}

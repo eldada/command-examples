@@ -2,8 +2,6 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 1
-
 image:
   repository: eldada.jfrog.io/docker/ubuntu-with-tools
   pullPolicy: IfNotPresent
@@ -15,17 +13,40 @@ artifactory:
   user: admin
   password: password
 
-  # Must provide a file that already exists
-  file: repo/folder/file
-
 # Infinite loop or run once
 infinite: true
 
-# Number of requests to perform
-requests: 10
+# Multiple deployments to run different use cases at the same time
+# deployment0 is always enabled
+deployment0:
+  replicaCount: 1
+  file: repo/folder/file0
+  requests: 10
+  concurrency: 2
 
-# Number of parallel requests to make at a time
-concurrency: 2
+# Optional deployment 1
+deployment1:
+  enabled: false
+  replicaCount: 1
+  file: repo/folder/file1
+  requests: 10
+  concurrency: 2
+
+# Optional deployment 2
+deployment2:
+  enabled: false
+  replicaCount: 1
+  file: repo/folder/file2
+  requests: 10
+  concurrency: 2
+
+# Optional deployment 3
+deployment3:
+  enabled: false
+  replicaCount: 1
+  file: repo/folder/file3
+  requests: 10
+  concurrency: 2
 
 imagePullSecrets: []
 nameOverride: ""
