@@ -52,6 +52,23 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+# Optionally inject a custom DNS configuration to your pods (good for network restricted environments).
+# The following below is an example and should be adjusted to your specific environment.
+# See https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/ for details
+dnsConfig: {}
+#  nameservers:
+#    - 172.20.10.0
+#  options:
+#    - name: ndots
+#      value: "5"
+#  searches:
+#    - my-internal-dns-service.svc.cluster.local
+#    - svc.cluster.local
+#    - cluster.local
+#    - google.internal
+
+# dnsPolicy: "None"
+
 serviceAccount:
   create: true
   automount: true

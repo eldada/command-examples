@@ -35,6 +35,11 @@ spec:
       serviceAccountName: {{ include "artifactory-load.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      dnsConfig:
+        {{- toYaml .Values.dnsConfig | nindent 8 }}
+      {{- if .Values.dnsPolicy }}
+      dnsPolicy: {{ .Values.dnsPolicy }}
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:

@@ -121,7 +121,10 @@ ab -H "Authorization: Bearer ${TOKEN}" -u ./file.bin -c 1 -n 50 http://localhost
 #### Helm Chart
 You can use the [artifactory-load](helm/artifactory-load) helm chart to deploy one or more pods running `ab` once or in an infinite loop.
 
-Upload a file you want to use for testing. In this example: `generic/cody.jpg`
+This chart support **up to** 4 different `ab` scenarios at the same time (using multiple deployments). The default is a single deployment.
+
+Upload the files you want to use for testing. These should each be configured in its own deploymentX block. See example below that has 4 different files of different sizes.
+
 Create a `test-value.yaml` with the specific details of your run
 ```yaml
 replicaCount: 2
@@ -131,11 +134,39 @@ artifactory:
   auth: true
   user: admin
   password: password
-  file: generic/cody.jpg
 
 infinite: true
-requests: 10000
-concurrency: 20
+
+# 100 concurrent downloads of a 5 KB sized file
+deployment0:
+  replicaCount: 3
+  file: generic-local/5kb.zip
+  requests: 10000
+  concurrency: 100
+
+# 20 concurrent downloads of a 2 MB sized file
+deployment1:
+  replicaCount: 3
+  enabled: true
+  file: generic-local/2mb.zip
+  requests: 10000
+  concurrency: 20
+
+# 10 concurrent downloads of a 100 MB sized file
+deployment2:
+  replicaCount: 3
+  enabled: true
+  file: generic-local/100mb.zip
+  requests: 10000
+  concurrency: 10
+
+# 5 concurrent downloads of a 1 GB sized file
+deployment3:
+  replicaCount: 3
+  enabled: true
+  file: generic-local/1gb.zip
+  requests: 10000
+  concurrency: 5
 ```
 
 Deploy the chart with the command
