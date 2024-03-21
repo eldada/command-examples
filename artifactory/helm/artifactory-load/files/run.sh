@@ -61,26 +61,32 @@ checkFileExists () {
 
 runAb () {
     local auth
+    local start_time
+    local end_time
+    local total_time
     if [[ "${AUTH}" =~ true ]]; then
         auth="-A ${ARTIFACTORY_USER}:${ARTIFACTORY_PASSWORD}"
     fi
+    start_time=$(date +"%s")
     ab -c ${CONCURRENCY} -n ${REQUESTS} ${auth} -d -q -S "${ARTIFACTORY_URL}/artifactory/${FILE}" || errorExit "Running ab failed"
+    end_time=$(date +"%s")
+
+    total_time=$((end_time - start_time))
+    echo -e "\n################################################"
+    echo "### Summary"
+    echo "### It took ${total_time} seconds to download ${FILE} ${REQUESTS} times with ${CONCURRENCY} concurrent connections"
+    echo "################################################"
 }
 
 runLoad () {
-    echo -e "\n--- Running load on Artifactory in an infinite loop"
+    echo -e "\n--- Running load on Artifactory"
     echo "Run ${REQUESTS} requests with ${CONCURRENCY} parallel connections"
 
-    if [[ "${INFINITE}" =~ true ]]; then
-        echo "Running an infinite loop"
-        while true; do
-            echo "############ Date: $(date)"
-            runAb
-        done
-    else
-        echo "Running once"
+    while true; do
+        echo -e "\n############ Date: $(date)"
         runAb
-    fi
+        [[ ! "${INFINITE}" =~ true ]] && break
+    done
 }
 
 terminate () {
@@ -89,16 +95,16 @@ terminate () {
 }
 
 main () {
-    echo -e "\n-------------------------------------"
+    echo -e "\n################################################"
 
     checkRequirements
     checkReadiness
     checkFileExists
     runLoad
 
-    echo "-------------------------------------"
-    echo "Done. Sleeping for a day..."
-    echo "-------------------------------------"
+    echo -e "\n################################################"
+    echo "### Done. Sleeping for a day..."
+    echo "################################################"
     sleep 1d
 }
 
