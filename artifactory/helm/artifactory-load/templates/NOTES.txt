@@ -1,0 +1,8 @@
+
+###################################
+Great news!
+You have {{ .Values.replicaCount }} pods running load on Artifactory.
+Running {{ .Values.concurrency }} parallel connections for a total of {{ .Values.requests }} requests {{ if .Values.infinite }}in an infinite loop {{ else }}once and sleeping for a day{{ end }}
+
+Artifactory URL: {{.Values.artifactory.url}}
+###################################

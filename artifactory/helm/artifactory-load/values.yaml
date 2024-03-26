@@ -1,0 +1,118 @@
+# Default values for artifactory-load.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+image:
+  repository: eldada.jfrog.io/docker/ubuntu-with-tools
+  pullPolicy: IfNotPresent
+  tag: "23.10"
+
+artifactory:
+  url: http://artifactory-server
+  auth: true
+  user: admin
+  password: password
+
+# Infinite loop or run once
+infinite: true
+
+# Multiple deployments to run different use cases at the same time
+# deployment0 is always enabled
+deployment0:
+  replicaCount: 1
+  file: repo/folder/file0
+  requests: 10
+  concurrency: 2
+
+# Optional deployment 1
+deployment1:
+  enabled: false
+  replicaCount: 1
+  file: repo/folder/file1
+  requests: 10
+  concurrency: 2
+
+# Optional deployment 2
+deployment2:
+  enabled: false
+  replicaCount: 1
+  file: repo/folder/file2
+  requests: 10
+  concurrency: 2
+
+# Optional deployment 3
+deployment3:
+  enabled: false
+  replicaCount: 1
+  file: repo/folder/file3
+  requests: 10
+  concurrency: 2
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+# Optionally inject a custom DNS configuration to your pods (good for network restricted environments).
+# The following below is an example and should be adjusted to your specific environment.
+# See https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/ for details
+dnsConfig: {}
+#  nameservers:
+#    - 172.20.10.0
+#  options:
+#    - name: ndots
+#      value: "5"
+#  searches:
+#    - my-internal-dns-service.svc.cluster.local
+#    - svc.cluster.local
+#    - cluster.local
+#    - google.internal
+
+# dnsPolicy: "None"
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  fsGroup: 1000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          topologyKey: kubernetes.io/hostname
+          labelSelector:
+            matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - artifactory-load
