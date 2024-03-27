@@ -9,7 +9,8 @@ LOGS_DIR="${SCRIPT_DIR}/${SCRIPT_NAME}-logs"
 # Set some defaults
 ART_URL=http://localhost
 REPO="benchmark-tests"
-SIZE_MB=1
+SIZE=1
+SIZE_UNIT=MB
 USER="admin"
 PASS="password"
 TEST=all
@@ -36,7 +37,8 @@ Usage: ${SCRIPT_NAME} <options>
 -u | --user | --username               : Artifactory user                           (defaults to ${USER})
 -p | --pass | --password               : Artifactory password, API key or token     (defaults to ${PASS})
 -r | --repo | --repository             : Repository                                 (defaults to ${REPO})
--s | --size                            : Size in MB                                 (defaults to ${SIZE_MB})
+-s | --size                            : Size                                       (defaults to ${SIZE})
+-k | --unit                            : Size unit (KB or MB only)                  (defaults to ${SIZE_UNIT})
 -i | --iterations                      : Number of test iterations                  (defaults to ${ITERATIONS})
 -t | --test                            : Test type (all|upload|download)            (defaults to ${TEST})
 -d | --logs                            : Logs directory                             (defaults to ${LOGS_DIR})
@@ -80,7 +82,11 @@ processOptions () {
                 shift 2
             ;;
             -s | --size)
-                SIZE_MB="$2"
+                SIZE="$2"
+                shift 2
+            ;;
+            -k | --unit)
+                SIZE_UNIT="$2"
                 shift 2
             ;;
             -i | --iterations)
@@ -112,6 +118,10 @@ processOptions () {
         errorExit "Test type can be 'download' or 'upload' only!"
     fi
 
+    if [[ ! ${SIZE_UNIT} =~ ^(KB|MB)$ ]]; then
+        errorExit "Size unit can be 'KB' or 'MB' only!"
+    fi
+
     # Add the artifactory context to the ART_URL if missing
     if [[ ! ${ART_URL} =~ \/artifactory\/?$ ]]; then
         ART_URL="${ART_URL%/}"
@@ -119,7 +129,7 @@ processOptions () {
     fi
 
     # Set a global, unique test file
-    TEST_FILE="test${SIZE_MB}MB_${SEED}"
+    TEST_FILE="test${SIZE}_${SIZE_UNIT}_${SEED}"
 }
 
 testArtifactory () {
@@ -148,15 +158,18 @@ deleteTestRepository () {
 
 createFile () {
     local test_file="$1"
+    local bs=1024
+    
+    [[ ${SIZE_UNIT} =~ MB ]] && bs=1048576
 
     # Create a unique binary, generic file
-    dd if=/dev/urandom of="${test_file}" bs=1048576 count="${SIZE_MB}" > ${LOGS_DIR}/create-file.log 2>&1 || errorExit "Creating file ${test_file} failed"
+    dd if=/dev/urandom of="${test_file}" bs=${bs} count="${SIZE}" > ${LOGS_DIR}/create-file.log 2>&1 || errorExit "Creating file ${test_file} failed"
 }
 
 createAndUploadTestFile () {
     FULL_PATH="${ART_URL}/${REPO}/${TEST_FILE}"
 
-    echo -n "Creating a $SIZE_MB MB file ${TEST_FILE}... "
+    echo -n "Creating a ${SIZE} ${SIZE_UNIT} file ${TEST_FILE}... "
     createFile "${TEST_FILE}"
     echo "Done"
 
@@ -219,7 +232,7 @@ uploadTest () {
     FULL_PATH="${ART_URL}/${REPO}/${TEST_FILE}"
 
     echo -e "\n========= UPLOADS TEST ========="
-    echo "Creating $SIZE_MB MB test files and uploading"
+    echo "Creating a ${SIZE} ${SIZE_UNIT} test files and uploading"
     echo "Run #, Test, Upload size (bytes), Http response code, Total time (sec), Connect time (sec), Speed (bytes/sec)" > "${LOGS_DIR}/${test}-results.csv"
     echo "Running $ITERATIONS serial uploads"
     for ((i=1; i <= ITERATIONS; i++)); do
@@ -249,12 +262,12 @@ main () {
     mkdir -p "${LOGS_DIR}"
 
     echo -e "\n================================"
-    echo "Server      $ART_URL"
-    echo "Tests       $TEST"
-    echo "User        $USER"
-    echo "Repository  $REPO"
-    echo "File size   $SIZE_MB MB"
-    echo "Iterations  $ITERATIONS"
+    echo "Server      ${ART_URL}"
+    echo "Tests       ${TEST}"
+    echo "User        ${USER}"
+    echo "Repository  ${REPO}"
+    echo "File size   ${SIZE} ${SIZE_UNIT}"
+    echo "Iterations  ${ITERATIONS}"
     echo "================================"
     testArtifactory
     cleanArtifactory
