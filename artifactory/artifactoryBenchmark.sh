@@ -159,11 +159,11 @@ deleteTestRepository () {
 createFile () {
     local test_file="$1"
     local bs=1024
-    
+
     [[ ${SIZE_UNIT} =~ MB ]] && bs=1048576
 
     # Create a unique binary, generic file
-    dd if=/dev/urandom of="${test_file}" bs=${bs} count="${SIZE}" > ${LOGS_DIR}/create-file.log 2>&1 || errorExit "Creating file ${test_file} failed"
+    dd if=/dev/urandom of="${test_file}" bs=${bs} count="${SIZE}" status=noxfer || errorExit "Creating file ${test_file} failed"
 }
 
 createAndUploadTestFile () {
@@ -233,10 +233,11 @@ uploadTest () {
 
     echo -e "\n========= UPLOADS TEST ========="
     echo "Creating a ${SIZE} ${SIZE_UNIT} test files and uploading"
+    createFile "${TEST_FILE}"
+    echo "Test file ${TEST_FILE} ready"
     echo "Run #, Test, Upload size (bytes), Http response code, Total time (sec), Connect time (sec), Speed (bytes/sec)" > "${LOGS_DIR}/${test}-results.csv"
     echo "Running $ITERATIONS serial uploads"
     for ((i=1; i <= ITERATIONS; i++)); do
-        createFile "${TEST_FILE}"
         echo -n "$i, $test, " >> "${LOGS_DIR}/${test}-results.csv"
         results_line=$(curl --connect-timeout 3 -f -k -s -u ${USER}:${PASS} -X PUT -T ./${TEST_FILE} "${FULL_PATH}" -o /dev/null --write-out '%{size_upload}, %{http_code}, %{time_total}, %{time_connect}, %{speed_upload}\n')
         OLD_IFS=$IFS
@@ -288,7 +289,7 @@ main () {
     esac
 
     deleteTestRepository
-    
+
     if [[ ${ERRORS_FOUND} =~ true ]]; then
         echo -e "\nERROR: Errors found in some of the tests. Review http response codes in the results"
     fi
