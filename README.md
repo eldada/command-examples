@@ -146,6 +146,11 @@ cat /proc/loadavg | awk '{print $1 ", " $2 ", " $3}'
 cut -d" " -f 1,2,42 /proc/[0-9]*/stat | sort -n -k 3 | tail -10
 ```
 
+* Get current processes running (a simple alternative to `ps` in case it's missing)
+```shell script
+for a in $(ls -d /proc/*/); do if [[ -f $a/exe ]]; then ls -l ${a}exe; fi; done
+```
+
 ### Screen
 
 * Full source in this [gist](https://gist.github.com/jctosta/af918e1618682638aa82)
