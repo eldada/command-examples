@@ -2,9 +2,9 @@
 
 ## Get process info for a PID or process name from /proc
 ## This script assumes the use of the /proc file system for representation of Linux processes
-
 SCRIPT_NAME=$0
 PROC_DIR=/proc
+PS=false
 PID=
 STRING=
 HEADERS=false
@@ -23,6 +23,7 @@ ${SCRIPT_NAME} - Search and get process info based on PID or search string
 
 Usage: ${SCRIPT_NAME} <options>
 
+-l | --list                            : Get list of running processes
 -p | --pid <process id>                : Search process using PID
 -s | --string <search string>          : Search process using search string
 -d | --dir | --directory <directory>   : Use custom /proc directory                    Default: /proc
@@ -30,6 +31,7 @@ Usage: ${SCRIPT_NAME} <options>
 
 Examples:
 ========
+Get list of running processes                                 $ ${SCRIPT_NAME} --list
 Get process info for process with PID 5151                    $ ${SCRIPT_NAME} --pid 5151
 Get process info for process using search string "fluent"     $ ${SCRIPT_NAME} --string fluent
 Get process info for PID 171717 in directory /tmp/proc        $ ${SCRIPT_NAME} --pid 171717 --directory /tmp/proc
@@ -43,6 +45,10 @@ END_USAGE
 processOptions () {
     while [[ $# -gt 0 ]]; do
         case "$1" in
+            -l | --list)
+                PS=true
+                shift 1
+            ;;
             -p | --pid)
                 PID="$2"
                 shift 2
@@ -64,8 +70,8 @@ processOptions () {
             ;;
         esac
     done
-    
-    if [ -z "$PID" ] && [ -z "$STRING" ]; then
+
+    if [[ "$PS" =~ false ]] && [[ -z "$PID" ]] && [[ -z "$STRING" ]]; then
         usage
         errorExit "Must specify PID or search string"
     fi
@@ -85,8 +91,19 @@ getProcessInfo () {
 
 main () {
     processOptions "$@"
-    cd "$PROC_DIR" || errorExit "Unable to change directory to $PROC_DIR"
 
+    # Just get list of running processes
+    if [[ "$PS" == true ]]; then
+        echo -e "List of running processes\n----------------------"
+        for a in $(ls -d ${PROC_DIR}/*/); do
+            if [[ -f $a/exe ]]; then
+                ls -l ${a}exe
+            fi
+        done
+        return
+    fi
+
+    cd "$PROC_DIR" || errorExit "Unable to change directory to $PROC_DIR"
     # Get by PID or string
     if [ -n "$PID" ]; then
         [ -d "$PROC_DIR/$PID" ] || errorExit "$PROC_DIR/$PID must be a directory"
