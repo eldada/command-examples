@@ -93,10 +93,10 @@ First, upload a test file you want to use to a repository. After that, you can r
 # -c <num>: Number of multiple requests to perform at a time. Default is one request at a time.
 # -n <num>: Number of requests to perform for the benchmarking session. The default is to just perform a single request which usually leads to non-representative benchmarking results.
 
-# 10 concurrent downloads with a total of 1000 requests
+# 10 concurrent downloads with a total of 1000 requests (basic auth)
 ab -A admin:password -c 10 -n 1000 http://localhost/artifactory/example-repo-local/example-file.bin
 
-# Use a token instead of basic auth to download
+# Using an access token instead of basic auth to download
 ab -H "Authorization: Bearer ${TOKEN}" -c 10 -n 1000 http://localhost/artifactory/example-repo-local/example-file.bin
 ```
 
