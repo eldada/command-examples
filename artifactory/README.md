@@ -184,7 +184,7 @@ Each script has its own usage you can get with
 ./<script.sh> --help
 ```
 
-### Benchmark from a Pod
+### Benchmark From Within a Pod
 You can run these tests from within a pod in Kubernetes
 ```shell
 # Deploy a pod with the needed tools
