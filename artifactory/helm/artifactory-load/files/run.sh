@@ -4,6 +4,7 @@ errorExit () {
     echo "ERROR: $1"
     [[ -n "$2" ]] && cat $2
     echo
+    echo "################################################"
     exit 1
 }
 
@@ -31,7 +32,7 @@ checkFileExists () {
     local http_code
     local auth
     local head="--head"
-    
+
     if [[ "${AUTH}" =~ true ]]; then
         auth="-u ${ARTIFACTORY_USER}:${ARTIFACTORY_PASSWORD}"
     fi
@@ -68,7 +69,7 @@ runAb () {
         auth="-A ${ARTIFACTORY_USER}:${ARTIFACTORY_PASSWORD}"
     fi
     start_time=$(date +"%s")
-    ab -c ${CONCURRENCY} -n ${REQUESTS} ${auth} -d -q -S "${ARTIFACTORY_URL}/artifactory/${FILE}" || errorExit "Running ab failed"
+    ab -c ${CONCURRENCY} -n ${REQUESTS} ${auth} "${ARTIFACTORY_URL}/artifactory/${FILE}" || errorExit "Running ab failed"
     end_time=$(date +"%s")
 
     total_time=$((end_time - start_time))
@@ -103,9 +104,8 @@ main () {
     runLoad
 
     echo -e "\n################################################"
-    echo "### Done. Sleeping for a day..."
+    echo "### Done"
     echo "################################################"
-    sleep 1d
 }
 
 main "$@"

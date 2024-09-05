@@ -14,39 +14,39 @@ artifactory:
   password: password
 
 # Infinite loop or run once
-infinite: true
+infinite: false
 
 # Multiple deployments to run different use cases at the same time
-# deployment0 is always enabled
-deployment0:
-  replicaCount: 1
+# job0 is always enabled
+job0:
+  parallelism: 1
   file: repo/folder/file0
-  requests: 10
-  concurrency: 2
+  requests: "10"
+  concurrency: "2"
 
-# Optional deployment 1
-deployment1:
+# Optional job 1
+job1:
   enabled: false
-  replicaCount: 1
+  parallelism: 1
   file: repo/folder/file1
-  requests: 10
-  concurrency: 2
+  requests: "10"
+  concurrency: "2"
 
-# Optional deployment 2
-deployment2:
+# Optional job 2
+job2:
   enabled: false
-  replicaCount: 1
+  parallelism: 1
   file: repo/folder/file2
-  requests: 10
-  concurrency: 2
+  requests: "10"
+  concurrency: "2"
 
-# Optional deployment 3
-deployment3:
+# Optional job 3
+job3:
   enabled: false
-  replicaCount: 1
+  parallelism: 1
   file: repo/folder/file3
-  requests: 10
-  concurrency: 2
+  requests: "10"
+  concurrency: "2"
 
 imagePullSecrets: []
 nameOverride: ""

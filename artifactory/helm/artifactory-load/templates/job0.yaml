@@ -1,21 +1,14 @@
-{{ if .Values.deployment1.enabled }}
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: batch/v1
+kind: Job
 metadata:
-  name: {{ include "artifactory-load.fullname" . }}-1
+  name: {{ include "artifactory-load.fullname" . }}-0
   labels:
     app: {{ template "artifactory-load.name" . }}
     chart: {{ template "artifactory-load.chart" . }}
-    heritage: {{ .Release.Service }}
     release: {{ .Release.Name }}
 spec:
-  replicas: {{ .Values.deployment1.replicaCount }}
-  selector:
-    matchLabels:
-      app: {{ template "artifactory-load.name" . }}
-      chart: {{ template "artifactory-load.chart" . }}
-      heritage: {{ .Release.Service }}
-      release: {{ .Release.Name }}
+  backoffLimit: 0
+  parallelism: {{ .Values.job0.parallelism }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -25,9 +18,9 @@ spec:
       labels:
         app: {{ template "artifactory-load.name" . }}
         chart: {{ template "artifactory-load.chart" . }}
-        heritage: {{ .Release.Service }}
         release: {{ .Release.Name }}
     spec:
+      restartPolicy: Never
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -58,13 +51,13 @@ spec:
             - name: ARTIFACTORY_PASSWORD
               value: "{{ .Values.artifactory.password }}"
             - name: FILE
-              value: "{{ .Values.deployment1.file }}"
+              value: "{{ .Values.job0.file }}"
             - name: AUTH
               value: "{{ .Values.artifactory.auth }}"
             - name: REQUESTS
-              value: "{{ .Values.deployment1.requests }}"
+              value: "{{ .Values.job0.requests }}"
             - name: CONCURRENCY
-              value: "{{ .Values.deployment1.concurrency }}"
+              value: "{{ .Values.job0.concurrency }}"
             - name: INFINITE
               value: "{{ .Values.infinite }}"
           resources:
@@ -90,4 +83,3 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-{{- end }}

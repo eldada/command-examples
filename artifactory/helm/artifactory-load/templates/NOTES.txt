@@ -1,8 +1,17 @@
 
 ###################################
 Great news!
-You have {{ .Values.replicaCount }} pods running load on Artifactory.
-Running {{ .Values.concurrency }} parallel connections for a total of {{ .Values.requests }} requests {{ if .Values.infinite }}in an infinite loop {{ else }}once and sleeping for a day{{ end }}
+You have load jobs pods running load on Artifactory:
+* Job 0: {{ .Values.job0.parallelism }} pods
+{{- if .Values.job1.enabled }}
+* Job 1: {{ .Values.job1.parallelism }} pods
+{{- end }}
+{{- if .Values.job2.enabled }}
+* Job 2: {{ .Values.job2.parallelism }} pods
+{{- end }}
+{{- if .Values.job3.enabled }}
+* Job 3: {{ .Values.job3.parallelism }} pods
+{{- end }}
 
 Artifactory URL: {{.Values.artifactory.url}}
 ###################################
