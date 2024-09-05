@@ -1,21 +1,15 @@
-{{ if .Values.deployment3.enabled }}
-apiVersion: apps/v1
-kind: Deployment
+{{ if .Values.job1.enabled }}
+apiVersion: batch/v1
+kind: Job
 metadata:
-  name: {{ include "artifactory-load.fullname" . }}-3
+  name: {{ include "artifactory-load.fullname" . }}-1
   labels:
     app: {{ template "artifactory-load.name" . }}
     chart: {{ template "artifactory-load.chart" . }}
-    heritage: {{ .Release.Service }}
     release: {{ .Release.Name }}
 spec:
-  replicas: {{ .Values.deployment3.replicaCount }}
-  selector:
-    matchLabels:
-      app: {{ template "artifactory-load.name" . }}
-      chart: {{ template "artifactory-load.chart" . }}
-      heritage: {{ .Release.Service }}
-      release: {{ .Release.Name }}
+  backoffLimit: 0
+  parallelism: {{ .Values.job1.parallelism }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -25,9 +19,9 @@ spec:
       labels:
         app: {{ template "artifactory-load.name" . }}
         chart: {{ template "artifactory-load.chart" . }}
-        heritage: {{ .Release.Service }}
         release: {{ .Release.Name }}
     spec:
+      restartPolicy: Never
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -58,13 +52,13 @@ spec:
             - name: ARTIFACTORY_PASSWORD
               value: "{{ .Values.artifactory.password }}"
             - name: FILE
-              value: "{{ .Values.deployment3.file }}"
+              value: "{{ .Values.job1.file }}"
             - name: AUTH
               value: "{{ .Values.artifactory.auth }}"
             - name: REQUESTS
-              value: "{{ .Values.deployment3.requests }}"
+              value: "{{ .Values.job1.requests }}"
             - name: CONCURRENCY
-              value: "{{ .Values.deployment3.concurrency }}"
+              value: "{{ .Values.job1.concurrency }}"
             - name: INFINITE
               value: "{{ .Values.infinite }}"
           resources:
