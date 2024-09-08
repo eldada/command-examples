@@ -118,55 +118,52 @@ ab -A admin:password -u ./file.bin -c 1 -n 50 http://localhost/artifactory/examp
 ab -H "Authorization: Bearer ${TOKEN}" -u ./file.bin -c 1 -n 50 http://localhost/artifactory/example-repo-local/file.bin
 ```
 
-#### Helm Chart
+#### Artifactory Load Helm Chart
 You can use the [artifactory-load](helm/artifactory-load) helm chart to deploy one or more pods running `ab` once or in an infinite loop.
 
-This chart support **up to** 4 different `ab` scenarios at the same time (using multiple deployments). The default is a single deployment.
+This chart support **up to** 4 different `ab` scenarios at the same time (using multiple jobs). The default is a single job.
 
-Upload the files you want to use for testing. These should each be configured in its own deploymentX block. See example below that has 4 different files of different sizes.
+Upload the files you want to use for testing. These should each be configured in its own jobX block. See example below that has 4 different scenarios with different sizes.
 
 Create a `test-value.yaml` with the specific details of your run
 ```yaml
-replicaCount: 2
-
+# Set the URL and credentials to access the Artifactory server to be tested
 artifactory:
   url: http://artifactory-server
   auth: true
   user: admin
   password: password
 
-infinite: true
+# Run 2 pods with each pulling a 1KB file 100,000 times with 2 concurrent requests
+job0:
+  parallelism: 2
+  file: example-repo-local/file1KB.bin
+  requests: "100000"
+  concurrency: "2"
 
-# 100 concurrent downloads of a 5 KB sized file
-deployment0:
-  replicaCount: 3
-  file: generic-local/5kb.zip
-  requests: 10000
-  concurrency: 100
-
-# 20 concurrent downloads of a 2 MB sized file
-deployment1:
-  replicaCount: 3
+# Run 1 pod pulling a 1KB file 50,000 times with 2 concurrent requests
+job1:
+  parallelism: 1
   enabled: true
-  file: generic-local/2mb.zip
-  requests: 10000
-  concurrency: 20
+  file: example-repo-local/file10KB.bin
+  requests: "50000"
+  concurrency: "2"
 
-# 10 concurrent downloads of a 100 MB sized file
-deployment2:
-  replicaCount: 3
+# Run 3 pods with each pulling a 100KB file 10,000 times with 3 concurrent requests
+job2:
+  parallelism: 3
   enabled: true
-  file: generic-local/100mb.zip
-  requests: 10000
-  concurrency: 10
+  file: example-repo-local/file100KB.bin
+  requests: "10000"
+  concurrency: "3"
 
-# 5 concurrent downloads of a 1 GB sized file
-deployment3:
-  replicaCount: 3
+# Run 1 pod pulling a 10MB file 10,000 times with 1 concurrent requests
+job3:
+  parallelism: 1
   enabled: true
-  file: generic-local/1gb.zip
-  requests: 10000
-  concurrency: 5
+  file: example-repo-local/file10MB.bin
+  requests: "10000"
+  concurrency: "1"
 ```
 
 Deploy the chart with the command
