@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Benchmark Artifactory uploads and downloads
-#set -x
+set -eou pipefail
+
 SCRIPT_NAME=$0
 SCRIPT_DIR=$(dirname ${SCRIPT_NAME})
 LOGS_DIR="${SCRIPT_DIR}/${SCRIPT_NAME}-logs"

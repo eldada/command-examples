@@ -3,6 +3,8 @@
 # A script for uploading a single binary file to an Artifactory generic repository
 # and then run a loop of parallel downloads of this file for a given number of iterations.
 
+set -eou pipefail
+
 SCRIPT_NAME=$0
 
 # Set some defaults

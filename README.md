@@ -388,7 +388,7 @@ A few `Dockerfile`s I use in my work
 * An Ubuntu with added tools and no root: [Dockerfile-ubuntu-with-tools](Dockerfiles/Dockerfile-ubuntu-with-tools)
 ```shell
 # For a local build
-docker build -f Dockerfile-ubuntu-with-tools -t eldada.jfrog.io/docker/ubuntu-with-tools:23.10 .
+docker build -f Dockerfile-ubuntu-with-tools -t eldada.jfrog.io/docker/ubuntu-with-tools:24.04 .
 
 # Multi arch build and push
 # If needed, create a buildx builder and use it
@@ -396,7 +396,7 @@ docker buildx create --platform linux/arm64,linux/amd64 --name build-amd64-arm64
 docker buildx use build-amd64-arm64
 
 # Multi arch build and push
-docker buildx build --platform linux/arm64,linux/amd64 -f Dockerfile-ubuntu-with-tools -t eldada.jfrog.io/docker/ubuntu-with-tools:23.10 --push .
+docker buildx build --platform linux/arm64,linux/amd64 -f Dockerfile-ubuntu-with-tools -t eldada.jfrog.io/docker/ubuntu-with-tools:24.04 --push .
 ```
 
 ## Artifactory
