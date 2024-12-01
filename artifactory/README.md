@@ -94,10 +94,10 @@ First, upload a test file you want to use to a repository. After that, you can r
 # -n <num>: Number of requests to perform for the benchmarking session. The default is to just perform a single request which usually leads to non-representative benchmarking results.
 
 # 10 concurrent downloads with a total of 1000 requests (basic auth)
-ab -A admin:password -c 10 -n 1000 http://localhost/artifactory/example-repo-local/example-file.bin
+ab -A admin:password -c 10 -n 1000 -k http://localhost/artifactory/example-repo-local/example-file.bin
 
 # Using an access token instead of basic auth to download
-ab -H "Authorization: Bearer ${TOKEN}" -c 10 -n 1000 http://localhost/artifactory/example-repo-local/example-file.bin
+ab -H "Authorization: Bearer ${TOKEN}" -c 10 -n 1000 -k http://localhost/artifactory/example-repo-local/example-file.bin
 ```
 
 #### Uploads
@@ -112,10 +112,10 @@ First, create a local file to be uploaded
 # -u <file>: File containing data to PUT.
 
 # 1 concurrent upload of a file 50 times
-ab -A admin:password -u ./file.bin -c 1 -n 50 http://localhost/artifactory/example-repo-local/file.bin
+ab -A admin:password -u ./file.bin -c 1 -n 50 -k http://localhost/artifactory/example-repo-local/file.bin
 
 # Use a token instead of basic auth to upload
-ab -H "Authorization: Bearer ${TOKEN}" -u ./file.bin -c 1 -n 50 http://localhost/artifactory/example-repo-local/file.bin
+ab -H "Authorization: Bearer ${TOKEN}" -u ./file.bin -c 1 -n 50 -k http://localhost/artifactory/example-repo-local/file.bin
 ```
 
 #### Artifactory Load Helm Chart

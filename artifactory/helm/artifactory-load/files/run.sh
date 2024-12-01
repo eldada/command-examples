@@ -22,13 +22,13 @@ checkRequirements () {
 }
 
 checkReadiness () {
-    echo -e "\n--- Checking Artifactory readiness"
+    echo -e "\n--- Checking Artifactory readiness (${ARTIFACTORY_URL}/artifactory/api/v1/system/readiness)"
 
     curl -f -s "${ARTIFACTORY_URL}/artifactory/api/v1/system/readiness" || errorExit "Artifactory readiness test failed"
 }
 
 checkFileExists () {
-    echo -e "\n--- Checking File ${FILE} exists and auth is correct"
+    echo -e "\n--- Checking File ${FILE} exists and auth is correct (${ARTIFACTORY_URL}/artifactory/${FILE})"
     local http_code
     local auth
     local head="--head"
@@ -69,7 +69,7 @@ runAb () {
         auth="-A ${ARTIFACTORY_USER}:${ARTIFACTORY_PASSWORD}"
     fi
     start_time=$(date +"%s")
-    ab -c ${CONCURRENCY} -n ${REQUESTS} ${auth} "${ARTIFACTORY_URL}/artifactory/${FILE}" || errorExit "Running ab failed"
+    ab -c ${CONCURRENCY} -n ${REQUESTS} ${auth} -k "${ARTIFACTORY_URL}/artifactory/${FILE}" || errorExit "Running ab failed"
     end_time=$(date +"%s")
 
     total_time=$((end_time - start_time))

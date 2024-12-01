@@ -101,6 +101,7 @@ resources: {}
   #   memory: 128Mi
 
 nodeSelector: {}
+  # Label: value
 
 tolerations: []
 
