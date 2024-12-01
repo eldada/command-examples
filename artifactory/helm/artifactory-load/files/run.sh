@@ -24,7 +24,7 @@ checkRequirements () {
 checkReadiness () {
     echo -e "\n--- Checking Artifactory readiness (${ARTIFACTORY_URL}/artifactory/api/v1/system/readiness)"
 
-    curl -f -s "${ARTIFACTORY_URL}/artifactory/api/v1/system/readiness" || errorExit "Artifactory readiness test failed"
+    curl -f -s -k "${ARTIFACTORY_URL}/artifactory/api/v1/system/readiness" || errorExit "Artifactory readiness test failed"
 }
 
 checkFileExists () {
@@ -42,7 +42,7 @@ checkFileExists () {
         head=
     fi
 
-    http_code=$(curl -f -s -o /dev/null ${head} --write-out "%{http_code}" ${auth} "${ARTIFACTORY_URL}/artifactory/${FILE}")
+    http_code=$(curl -f -s -k -o /dev/null ${head} --write-out "%{http_code}" ${auth} "${ARTIFACTORY_URL}/artifactory/${FILE}")
 
     case "${http_code}" in
         20*)
