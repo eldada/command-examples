@@ -5,7 +5,7 @@
 image:
   repository: eldada.jfrog.io/docker/ubuntu-with-tools
   pullPolicy: IfNotPresent
-  tag: "23.10"
+  tag: "24.04"
 
 artifactory:
   url: http://artifactory-server
