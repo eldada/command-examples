@@ -16,12 +16,18 @@ artifactory:
 # Infinite loop or run once
 infinite: false
 
-# Multiple deployments to run different use cases at the same time
+## Multiple deployments to run different use cases at the same time
+## Variables for each job:
+#  parallelism: How many pods to run in parallel per job
+#  file:        File to download from Artifactory
+#  timeSec:     How long to run the job in seconds
+#  concurrency: How many threads to run in parallel per pod
+
 # job0 is always enabled
 job0:
   parallelism: 1
   file: repo/folder/file0
-  requests: "10"
+  timeSec: "10"
   concurrency: "2"
 
 # Optional job 1
@@ -29,7 +35,7 @@ job1:
   enabled: false
   parallelism: 1
   file: repo/folder/file1
-  requests: "10"
+  timeSec: "10"
   concurrency: "2"
 
 # Optional job 2
@@ -37,7 +43,7 @@ job2:
   enabled: false
   parallelism: 1
   file: repo/folder/file2
-  requests: "10"
+  timeSec: "10"
   concurrency: "2"
 
 # Optional job 3
@@ -45,7 +51,7 @@ job3:
   enabled: false
   parallelism: 1
   file: repo/folder/file3
-  requests: "10"
+  timeSec: "10"
   concurrency: "2"
 
 imagePullSecrets: []

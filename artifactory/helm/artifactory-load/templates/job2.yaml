@@ -56,8 +56,8 @@ spec:
               value: "{{ .Values.job2.file }}"
             - name: AUTH
               value: "{{ .Values.artifactory.auth }}"
-            - name: REQUESTS
-              value: "{{ .Values.job2.requests }}"
+            - name: TIME_SEC
+              value: "{{ .Values.job2.timeSec }}"
             - name: CONCURRENCY
               value: "{{ .Values.job2.concurrency }}"
             - name: INFINITE

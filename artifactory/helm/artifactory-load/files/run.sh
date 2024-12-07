@@ -62,26 +62,18 @@ checkFileExists () {
 
 runAb () {
     local auth
-    local start_time
-    local end_time
-    local total_time
     if [[ "${AUTH}" =~ true ]]; then
         auth="-A ${ARTIFACTORY_USER}:${ARTIFACTORY_PASSWORD}"
     fi
-    start_time=$(date +"%s")
-    ab -c ${CONCURRENCY} -n ${REQUESTS} ${auth} -k "${ARTIFACTORY_URL}/artifactory/${FILE}" || errorExit "Running ab failed"
-    end_time=$(date +"%s")
+    ab -c ${CONCURRENCY} -t ${TIME_SEC} ${auth} -k "${ARTIFACTORY_URL}/artifactory/${FILE}" || errorExit "Running ab failed"
 
-    total_time=$((end_time - start_time))
     echo -e "\n################################################"
-    echo "### Summary"
-    echo "### It took ${total_time} seconds to download ${FILE} ${REQUESTS} times with ${CONCURRENCY} concurrent connections"
-    echo "################################################"
+    echo "### Run for ${TIME_SEC} seconds with ${CONCURRENCY} parallel connections done!"
 }
 
 runLoad () {
     echo -e "\n--- Running load on Artifactory"
-    echo "Run ${REQUESTS} requests with ${CONCURRENCY} parallel connections"
+    echo "Run for ${TIME_SEC} seconds with ${CONCURRENCY} parallel connections"
 
     while true; do
         echo -e "\n############ Date: $(date)"
@@ -103,8 +95,6 @@ main () {
     checkFileExists
     runLoad
 
-    echo -e "\n################################################"
-    echo "### Done"
     echo "################################################"
 }
 
