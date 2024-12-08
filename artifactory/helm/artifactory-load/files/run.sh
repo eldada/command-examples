@@ -79,7 +79,6 @@ runWrk () {
     local auth_hashed
     local cpu
 
-    set -x
     # Set the number of threads to the number of CPUs available on the node for highest performance
     cpu=$(nproc)
 
@@ -89,7 +88,7 @@ runWrk () {
     else
         wrk -d ${TIME_SEC} -c ${CONCURRENCY} -t ${cpu} --latency "${ARTIFACTORY_URL}/artifactory/${FILE}" || errorExit "Running wrk failed"
     fi
-    set +x
+
     echo -e "\n################################################"
     echo "### Run for ${TIME_SEC} seconds with ${CONCURRENCY} parallel connections done!"
 }
