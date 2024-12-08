@@ -12,6 +12,9 @@ checkRequirements () {
     echo -e "\n--- Checking required variables"
 
     echo -n "Checking needed variables are set... "
+    [[ "${TOOL}" =~ (ab|wrk) ]] || errorExit "TOOL is not set to 'ab' or 'wrk'"
+    [[ -n "${CONCURRENCY}" ]] || errorExit "CONCURRENCY is not set"
+    [[ -n "${TIME_SEC}" ]] || errorExit "TIME_SEC is not set"
     [[ -n "${ARTIFACTORY_URL}" ]] || errorExit "ARTIFACTORY_URL is not set"
     [[ -n "${FILE}" ]] || errorExit "FILE is not set"
     if [[ "${AUTH}" =~ true ]]; then
@@ -71,13 +74,38 @@ runAb () {
     echo "### Run for ${TIME_SEC} seconds with ${CONCURRENCY} parallel connections done!"
 }
 
+runWrk () {
+    local auth
+    local auth_hashed
+    local cpu
+
+    set -x
+    # Set the number of threads to the number of CPUs available on the node for highest performance
+    cpu=$(nproc)
+
+    if [[ "${AUTH}" =~ true ]]; then
+        auth_hashed=$(echo -n ${ARTIFACTORY_USER}:${ARTIFACTORY_PASSWORD} | base64)
+        wrk -d ${TIME_SEC} -c ${CONCURRENCY} -t ${cpu} --latency -H "Authorization: Basic ${auth_hashed}" "${ARTIFACTORY_URL}/artifactory/${FILE}" || errorExit "Running wrk failed"
+    else
+        wrk -d ${TIME_SEC} -c ${CONCURRENCY} -t ${cpu} --latency "${ARTIFACTORY_URL}/artifactory/${FILE}" || errorExit "Running wrk failed"
+    fi
+    set +x
+    echo -e "\n################################################"
+    echo "### Run for ${TIME_SEC} seconds with ${CONCURRENCY} parallel connections done!"
+}
+
 runLoad () {
     echo -e "\n--- Running load on Artifactory"
     echo "Run for ${TIME_SEC} seconds with ${CONCURRENCY} parallel connections"
 
     while true; do
         echo -e "\n############ Date: $(date)"
-        runAb
+        echo "############ Running: ${TOOL}"
+        if [[ "${TOOL}" =~ ab ]]; then
+            runAb
+        elif [[ "${TOOL}" =~ wrk ]]; then
+            runWrk
+        fi
         [[ ! "${INFINITE}" =~ true ]] && break
     done
 }

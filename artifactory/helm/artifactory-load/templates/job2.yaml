@@ -46,6 +46,8 @@ spec:
             - -c
             - exec /home/ubuntu/run.sh
           env:
+            - name: TOOL
+              value: "{{ .Values.job2.tool }}"
             - name: ARTIFACTORY_URL
               value: "{{ .Values.artifactory.url }}"
             - name: ARTIFACTORY_USER
