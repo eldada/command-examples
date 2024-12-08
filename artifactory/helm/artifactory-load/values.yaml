@@ -26,7 +26,7 @@ infinite: false
 
 # job0 is always enabled
 job0:
-  tool: "ab"
+  tool: "wrk"
   parallelism: 1
   file: repo/folder/file0
   timeSec: "10"
@@ -35,7 +35,7 @@ job0:
 # Optional job 1
 job1:
   enabled: false
-  tool: "ab"
+  tool: "wrk"
   parallelism: 1
   file: repo/folder/file1
   timeSec: "10"
@@ -44,7 +44,7 @@ job1:
 # Optional job 2
 job2:
   enabled: false
-  tool: "ab"
+  tool: "wrk"
   parallelism: 1
   file: repo/folder/file2
   timeSec: "10"
@@ -53,7 +53,7 @@ job2:
 # Optional job 3
 job3:
   enabled: false
-  tool: "ab"
+  tool: "wrk"
   parallelism: 1
   file: repo/folder/file3
   timeSec: "10"
