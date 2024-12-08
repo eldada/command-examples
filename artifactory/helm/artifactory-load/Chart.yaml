@@ -4,6 +4,6 @@ description: A Helm chart for running load on JFrog Artifactory
 
 type: application
 
-version: 0.4.0
+version: 0.5.0
 
-appVersion: "0.4.0"
+appVersion: "0.5.0"
