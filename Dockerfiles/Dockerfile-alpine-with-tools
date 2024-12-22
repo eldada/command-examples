@@ -1,0 +1,10 @@
+# Use the latest version of Alpine as the base image
+FROM eldada.jfrog.io/docker/alpine:3.21.0
+
+# Install the necessary packages
+RUN apk add --no-cache vim curl jq git yq
+
+# Set the working directory (optional)
+WORKDIR /app
+
+CMD ["sh"]

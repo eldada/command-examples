@@ -399,6 +399,20 @@ docker buildx use build-amd64-arm64
 docker buildx build --platform linux/arm64,linux/amd64 -f Dockerfile-ubuntu-with-tools -t eldada.jfrog.io/docker/ubuntu-with-tools:24.04 --push .
 ```
 
+* An Alpine with added tools: [Dockerfile-alpine-with-tools](Dockerfiles/Dockerfile-alpine-with-tools)
+```shell
+# For a local build
+docker build -f Dockerfile-alpine-with-tools -t eldada.jfrog.io/docker/alpine-with-tools:3.21.0 .
+
+# Multi arch build and push
+# If needed, create a buildx builder and use it
+docker buildx create --platform linux/arm64,linux/amd64 --name build-amd64-arm64
+docker buildx use build-amd64-arm64
+
+# Multi arch build and push
+docker buildx build --platform linux/arm64,linux/amd64 -f Dockerfile-alpine-with-tools -t eldada.jfrog.io/docker/alpine-with-tools:3.21.0 --push .
+```
+
 ## Artifactory
 
 See Artifactory related scripts and examples in [artifactory](artifactory)
