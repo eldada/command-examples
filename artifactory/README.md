@@ -119,9 +119,9 @@ ab -H "Authorization: Bearer ${TOKEN}" -u ./file.bin -c 1 -n 50 -k http://localh
 ```
 
 #### Artifactory Load Helm Chart
-You can use the [artifactory-load](helm/artifactory-load) helm chart to deploy one or more pods running `ab` once or in an infinite loop.
+You can use the [artifactory-load](helm/artifactory-load) helm chart to deploy one or more pods running `ab` or `wrk` once for a given time.
 
-This chart support **up to** 4 different `ab` scenarios at the same time (using multiple jobs). The default is a single job.
+This chart support **up to** 4 different `ab` or `wrk` scenarios at the same time (using multiple jobs). The default is a single job.
 
 Upload the files you want to use for testing. These should each be configured in its own jobX block. See example below that has 4 different scenarios with different sizes.
 
@@ -134,35 +134,47 @@ artifactory:
   user: admin
   password: password
 
-# Run 2 pods with each pulling a 1KB file 100,000 times with 2 concurrent requests
+## Multiple Jobs to run different use cases at the same time
+## Variables for each job:
+#  tool:        The tool to use for the tests (ab or wrk)
+#  parallelism: How many pods to run in parallel per job
+#  file:        File to download from Artifactory
+#  timeSec:     How long to run the job in seconds
+#  concurrency: How many threads to run in parallel per pod
+
+# Run 2 pods with each pulling a 1KB file for 3 minutes (180 seconds)
 job0:
+  tool: "wrk"
   parallelism: 2
   file: example-repo-local/file1KB.bin
-  requests: "100000"
+  timeSec: "180"
   concurrency: "2"
 
-# Run 1 pod pulling a 1KB file 50,000 times with 2 concurrent requests
+# Run 1 pod pulling a 10KB file for 5 minutes (300 seconds)
 job1:
+  tool: "wrk"
   parallelism: 1
   enabled: true
   file: example-repo-local/file10KB.bin
-  requests: "50000"
+  timeSec: "300"
   concurrency: "2"
 
-# Run 3 pods with each pulling a 100KB file 10,000 times with 3 concurrent requests
+# Run 3 pods with each pulling a 100KB file for 10 minutes (600 seconds)
 job2:
+  tool: "wrk"
   parallelism: 3
   enabled: true
   file: example-repo-local/file100KB.bin
-  requests: "10000"
+  timeSec: "600"
   concurrency: "3"
 
-# Run 1 pod pulling a 10MB file 10,000 times with 1 concurrent requests
+# Run 1 pod pulling a 10MB file for 10 minutes (600 seconds)
 job3:
+  tool: "wrk"
   parallelism: 1
   enabled: true
   file: example-repo-local/file10MB.bin
-  requests: "10000"
+  timeSec: "600"
   concurrency: "1"
 ```
 
