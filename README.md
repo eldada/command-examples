@@ -354,6 +354,11 @@ screen ~/Library/Containers/com.docker.docker/Data/com.docker.driver.amd64-linux
 # Ctrl +A +D to exit
 ```
 
+* Connect to Rancher Desktop VM on Mac
+```shell script
+LIMA_HOME="${HOME}/Library/Application Support/rancher-desktop/lima" "/Applications/Rancher Desktop.app/Contents/Resources/resources/darwin/lima/bin/limactl" shell 0
+```
+
 * Remove `none` images (usually leftover failed docker builds)
 ```shell script
 docker images | grep none | awk '{print $3}' | xargs docker rmi
