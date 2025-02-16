@@ -119,11 +119,17 @@ ab -H "Authorization: Bearer ${TOKEN}" -u ./file.bin -c 1 -n 50 -k http://localh
 ```
 
 #### Artifactory Load Helm Chart
-You can use the [artifactory-load](helm/artifactory-load) helm chart to deploy one or more pods running `ab` or `wrk` once for a given time.
+You can use the [artifactory-load](helm/artifactory-load) helm chart to deploy one or more pods running `ab` or `wrk` for a given time. You can run downloads, uploads, or both.
 
-This chart support **up to** 4 different `ab` or `wrk` scenarios at the same time (using multiple jobs). The default is a single job.
+This chart support **up to**
+1. 4 different downloads `ab` or `wrk` scenarios at the same time (using multiple jobs). The default is a single job.
+2. 2 different uploads (using `ab`) scenarios at the same time (using multiple jobs). The default is no upload job.
 
-Upload the files you want to use for testing. These should each be configured in its own jobX block. See example below that has 4 different scenarios with different sizes.
+You can alter the chart and add support for more downloads or uploads scenarios if needed.
+
+For downloads upload the files you want to use for the downloads testing. These should each be configured in its own jobX block. See example below that has 4 different scenarios with different sizes
+
+For uploads, just enable and fill in the configuration block for the upload job(s) you want to run.
 
 Create a `test-value.yaml` with the specific details of your run
 ```yaml
@@ -134,7 +140,7 @@ artifactory:
   user: admin
   password: password
 
-## Multiple Jobs to run different use cases at the same time
+## Multiple Jobs to run different download use cases at the same time
 ## Variables for each job:
 #  tool:        The tool to use for the tests (ab or wrk)
 #  parallelism: How many pods to run in parallel per job
@@ -176,11 +182,44 @@ job3:
   file: example-repo-local/file10MB.bin
   timeSec: "600"
   concurrency: "1"
+
+## Multiple Jobs to run different upload use cases at the same time
+## Variables for each job:
+#  parallelism: How many pods to run in parallel per job
+#  file:        File to upload to Artifactory
+#  sizeKB:      Size of the file in KB
+#  timeSec:     How long to run the job in seconds
+#  concurrency: How many threads to run in parallel per pod
+
+# Optional upload job 0
+# Run 2 pods uploading a 10KB file for 10 minutes with 5 threads (users)
+uploadJob0:
+  enabled: true
+  parallelism: 2
+  file: example-repo-local/upload10KB.bin
+  sizeKB: "10"
+  timeSec: "600"
+  concurrency: "5"
+
+# Optional upload job 1
+# Run 1 pod uploading a 1MB file for 10 minutes with 2 threads (users)
+uploadJob1:
+  enabled: true
+  parallelism: 1
+  file: example-repo-local/upload1MB.bin
+  sizeKB: "1024"
+  timeSec: "600"
+  concurrency: "2"
 ```
 
 Deploy the chart with the command
 ```shell
-helm upgrade --install al . -f test-values.yaml
+helm upgrade --install load . -f test-values.yaml
+```
+
+Uninstall the chart with the command
+```shell
+helm uninstall load
 ```
 
 ### Shell Scripts

@@ -11,6 +11,11 @@ errorExit () {
 checkRequirements () {
     echo -e "\n--- Checking required variables"
 
+    # Upload is supported with ab only
+    if [[ "${ACTION}" =~ "upload" ]]; then
+        TOOL=ab
+    fi
+
     echo -n "Checking needed variables are set... "
     [[ "${TOOL}" =~ (ab|wrk) ]] || errorExit "TOOL is not set to 'ab' or 'wrk'"
     [[ -n "${CONCURRENCY}" ]] || errorExit "CONCURRENCY is not set"
@@ -32,6 +37,12 @@ checkReadiness () {
 
 checkFileExists () {
     echo -e "\n--- Checking File ${FILE} exists and auth is correct (${ARTIFACTORY_URL}/artifactory/${FILE})"
+
+    if [[ "${ACTION}" =~ "upload" ]]; then
+        echo "Upload tests. Skipping file existence check"
+        return
+    fi
+
     local http_code
     local auth
     local head="--head"
@@ -68,7 +79,15 @@ runAb () {
     if [[ "${AUTH}" =~ true ]]; then
         auth="-A ${ARTIFACTORY_USER}:${ARTIFACTORY_PASSWORD}"
     fi
-    ab -c ${CONCURRENCY} -t ${TIME_SEC} ${auth} -k "${ARTIFACTORY_URL}/artifactory/${FILE}" || errorExit "Running ab failed"
+
+    # If ACTION is upload, create the file to upload
+    if [[ "${ACTION}" =~ "upload" ]]; then
+        echo "Creating binary file of size ${FILE_SIZE_KB} KB to upload"
+        dd if=/dev/random of="/tmp/upload_${FILE_SIZE_KB}" bs=1024 count=${FILE_SIZE_KB} || errorExit "Creating file to upload failed"
+        ab -c ${CONCURRENCY} -t ${TIME_SEC} ${auth} -k -u "/tmp/upload_${FILE_SIZE_KB}" "${ARTIFACTORY_URL}/artifactory/${FILE}" || errorExit "Running ab failed"
+    else
+        ab -c ${CONCURRENCY} -t ${TIME_SEC} ${auth} -k "${ARTIFACTORY_URL}/artifactory/${FILE}" || errorExit "Running ab failed"
+    fi
 
     echo -e "\n################################################"
     echo "### Run for ${TIME_SEC} seconds with ${CONCURRENCY} parallel connections done!"
@@ -81,6 +100,11 @@ runWrk () {
 
     # Set the number of threads to the number of CPUs available on the node for highest performance
     cpu=$(nproc)
+
+    if [[ ${cpu} -gt ${CUNCURRENCY} ]]; then
+        echo "NOTE: Number of CPUs (${cpu}) is higher than CONCURRENCY (${CONCURRENCY}). Setting cpu to ${CUNCURRENCY} to align with wrk limitations"
+        cpu=${CONCURRENCY}
+    fi
 
     if [[ "${AUTH}" =~ true ]]; then
         auth_hashed=$(echo -n ${ARTIFACTORY_USER}:${ARTIFACTORY_PASSWORD} | base64)
@@ -99,7 +123,10 @@ runLoad () {
 
     while true; do
         echo -e "\n############ Date: $(date)"
-        echo "############ Running: ${TOOL}"
+        echo "############ Running ${TOOL}"
+        if [[ "${ACTION}" =~ "upload" ]]; then
+           echo "############ Running uploads!"
+        fi
         if [[ "${TOOL}" =~ ab ]]; then
             runAb
         elif [[ "${TOOL}" =~ wrk ]]; then

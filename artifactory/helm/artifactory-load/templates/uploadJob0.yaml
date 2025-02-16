@@ -1,0 +1,91 @@
+{{ if .Values.uploadJob0.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "artifactory-load.fullname" . }}-upload-0
+  labels:
+    app: {{ template "artifactory-load.name" . }}
+    chart: {{ template "artifactory-load.chart" . }}
+    release: {{ .Release.Name }}
+spec:
+  backoffLimit: 0
+  parallelism: {{ .Values.uploadJob0.parallelism }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: {{ template "artifactory-load.name" . }}
+        chart: {{ template "artifactory-load.chart" . }}
+        release: {{ .Release.Name }}
+    spec:
+      restartPolicy: Never
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "artifactory-load.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      dnsConfig:
+        {{- toYaml .Values.dnsConfig | nindent 8 }}
+      {{- if .Values.dnsPolicy }}
+      dnsPolicy: {{ .Values.dnsPolicy }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - /bin/bash
+            - -c
+            - exec /home/ubuntu/run.sh
+          env:
+            - name: ACTION
+              value: "upload"
+            - name: ARTIFACTORY_URL
+              value: "{{ .Values.artifactory.url }}"
+            - name: ARTIFACTORY_USER
+              value: "{{ .Values.artifactory.user }}"
+            - name: ARTIFACTORY_PASSWORD
+              value: "{{ .Values.artifactory.password }}"
+            - name: FILE
+              value: "{{ .Values.uploadJob0.file }}"
+            - name: FILE_SIZE_KB
+              value: "{{ .Values.uploadJob0.sizeKB }}"
+            - name: AUTH
+              value: "{{ .Values.artifactory.auth }}"
+            - name: TIME_SEC
+              value: "{{ .Values.uploadJob0.timeSec }}"
+            - name: CONCURRENCY
+              value: "{{ .Values.uploadJob0.concurrency }}"
+            - name: INFINITE
+              value: "{{ .Values.infinite }}"
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: run-script
+              mountPath: "/home/ubuntu/run.sh"
+              subPath: "run.sh"
+      volumes:
+        - name: run-script
+          configMap:
+            name: {{ include "artifactory-load.fullname" . }}-run-script
+            defaultMode: 0774
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}
