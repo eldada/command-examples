@@ -16,7 +16,7 @@ artifactory:
 # Infinite loop or run once
 infinite: false
 
-## Multiple deployments to run different use cases at the same time
+## Multiple Jobs to run different download use cases at the same time
 ## Variables for each job:
 #  tool:        The tool to use for the tests (ab or wrk)
 #  parallelism: How many pods to run in parallel per job
@@ -59,6 +59,33 @@ job3:
   timeSec: "10"
   concurrency: "2"
 
+## Multiple Jobs to run different upload use cases at the same time
+## Variables for each job:
+#  parallelism: How many pods to run in parallel per job
+#  repoPath:    Repository path to upload the file to (the file name will be unique per pod)
+#  sizeKB:      Size of the file in KB
+#  timeSec:     How long to run the job in seconds
+#  concurrency: How many threads to run in parallel per pod
+
+# Optional upload job 0
+uploadJob0:
+  enabled: false
+  parallelism: 1
+  repoPath: repo/folder
+  sizeKB: "10"
+  timeSec: "10"
+  concurrency: "2"
+
+# Optional upload job 1
+uploadJob1:
+  enabled: false
+  parallelism: 1
+  repoPath: repo/folder
+  sizeKB: "10"
+  timeSec: "10"
+  concurrency: "2"
+
+# Affinity examples
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
