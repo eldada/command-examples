@@ -62,7 +62,7 @@ job3:
 ## Multiple Jobs to run different upload use cases at the same time
 ## Variables for each job:
 #  parallelism: How many pods to run in parallel per job
-#  file:        File to upload to Artifactory
+#  repoPath:    Repository path to upload the file to (the file name will be unique per pod)
 #  sizeKB:      Size of the file in KB
 #  timeSec:     How long to run the job in seconds
 #  concurrency: How many threads to run in parallel per pod
@@ -71,7 +71,7 @@ job3:
 uploadJob0:
   enabled: false
   parallelism: 1
-  file: repo/folder/file0
+  repoPath: repo/folder
   sizeKB: "10"
   timeSec: "10"
   concurrency: "2"
@@ -80,7 +80,7 @@ uploadJob0:
 uploadJob1:
   enabled: false
   parallelism: 1
-  file: repo/folder/file1
+  repoPath: repo/folder
   sizeKB: "10"
   timeSec: "10"
   concurrency: "2"

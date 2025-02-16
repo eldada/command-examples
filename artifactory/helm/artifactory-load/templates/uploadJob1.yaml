@@ -53,8 +53,8 @@ spec:
               value: "{{ .Values.artifactory.user }}"
             - name: ARTIFACTORY_PASSWORD
               value: "{{ .Values.artifactory.password }}"
-            - name: FILE
-              value: "{{ .Values.uploadJob1.file }}"
+            - name: REPO_PATH
+              value: "{{ .Values.uploadJob1.repoPath }}"
             - name: FILE_SIZE_KB
               value: "{{ .Values.uploadJob1.sizeKB }}"
             - name: AUTH
