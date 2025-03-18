@@ -4,7 +4,10 @@ FROM eldada.jfrog.io/docker/ubuntu:24.04
 # Install the tools and create the ubuntu user
 RUN apt update && apt install -y vim curl git jq apache2-utils wrk dnsutils traceroute && \
     curl -L https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -o /usr/bin/yq && \
-    chmod +x /usr/bin/yq
+    curl -L https://eldada.jfrog.io/artifactory/tools/hey/hey_linux_arm64 -o /usr/bin/hey_linux_aarch64 && \
+    curl -L https://eldada.jfrog.io/artifactory/tools/hey/hey_linux_amd64 -o /usr/bin/hey_linux_x86_64 && \
+    chmod +x /usr/bin/yq /usr/bin/hey* && \
+    echo 'alias hey="/usr/bin/hey_linux_$(arch)"' >> /home/ubuntu/.bashrc
 
 # Switch to ubuntu user and /home/ubuntu working directory
 USER ubuntu

@@ -18,11 +18,16 @@ infinite: false
 
 ## Multiple Jobs to run different download use cases at the same time
 ## Variables for each job:
-#  tool:        The tool to use for the tests (ab or wrk)
+#  tool:        The tool to use for the tests (ab, wrk or hey)
 #  parallelism: How many pods to run in parallel per job
 #  file:        File to download from Artifactory
 #  timeSec:     How long to run the job in seconds
 #  concurrency: How many threads to run in parallel per pod
+
+## IMPORTANT NOTES:
+#  1. For downloads, the test file must be in the Artifactory repository
+#  2. If the download tests need to follow redirects, use the 'ab` tool as the 'wrk' tool does not follow redirects
+#  3. For uploads, the repository must exist
 
 # job0 is always enabled
 job0:

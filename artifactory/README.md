@@ -119,10 +119,10 @@ ab -H "Authorization: Bearer ${TOKEN}" -u ./file.bin -c 1 -n 50 -k http://localh
 ```
 
 #### Artifactory Load Helm Chart
-You can use the [artifactory-load](helm/artifactory-load) helm chart to deploy one or more pods running `ab` or `wrk` for a given time. You can run downloads, uploads, or both.
+You can use the [artifactory-load](helm/artifactory-load) helm chart to deploy one or more pods running `ab`, `wrk` or `hey` for a given time. You can run downloads, uploads, or both.
 
 This chart support **up to**
-1. 4 different downloads `ab` or `wrk` scenarios at the same time (using multiple jobs). The default is a single job.
+1. 4 different downloads `ab`, `wrk` or `hey` scenarios at the same time (using multiple jobs). The default is a single job.
 2. 2 different uploads (using `ab`) scenarios at the same time (using multiple jobs). The default is no upload job.
 
 You can alter the chart and add support for more downloads or uploads scenarios if needed.
@@ -142,7 +142,7 @@ artifactory:
 
 ## Multiple Jobs to run different download use cases at the same time
 ## Variables for each job:
-#  tool:        The tool to use for the tests (ab or wrk)
+#  tool:        The tool to use for the tests (ab, wrk or hey)
 #  parallelism: How many pods to run in parallel per job
 #  file:        File to download from Artifactory
 #  timeSec:     How long to run the job in seconds

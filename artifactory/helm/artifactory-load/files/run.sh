@@ -19,7 +19,7 @@ checkRequirements () {
     fi
 
     echo -n "Checking needed variables are set... "
-    [[ "${TOOL}" =~ (ab|wrk) ]] || errorExit "TOOL is not set to 'ab' or 'wrk'"
+    [[ "${TOOL}" =~ (ab|wrk|hey) ]] || errorExit "TOOL is not set to 'ab', 'wrk' or 'hey'"
     [[ -n "${CONCURRENCY}" ]] || errorExit "CONCURRENCY is not set"
     [[ -n "${TIME_SEC}" ]] || errorExit "TIME_SEC is not set"
     [[ -n "${ARTIFACTORY_URL}" ]] || errorExit "ARTIFACTORY_URL is not set"
@@ -110,9 +110,24 @@ runWrk () {
 
     if [[ "${AUTH}" =~ true ]]; then
         auth_hashed=$(echo -n ${ARTIFACTORY_USER}:${ARTIFACTORY_PASSWORD} | base64)
-        wrk -d ${TIME_SEC} -c ${CONCURRENCY} -t ${cpu} --latency -H "Authorization: Basic ${auth_hashed}" "${ARTIFACTORY_URL}/artifactory/${FILE}" || errorExit "Running wrk failed"
+        wrk -d ${TIME_SEC} -c ${CONCURRENCY} -t ${cpu} --latency --timeout 5s -H "Authorization: Basic ${auth_hashed}" "${ARTIFACTORY_URL}/artifactory/${FILE}" || errorExit "Running wrk failed"
     else
-        wrk -d ${TIME_SEC} -c ${CONCURRENCY} -t ${cpu} --latency "${ARTIFACTORY_URL}/artifactory/${FILE}" || errorExit "Running wrk failed"
+        wrk -d ${TIME_SEC} -c ${CONCURRENCY} -t ${cpu} --latency --timeout 5s "${ARTIFACTORY_URL}/artifactory/${FILE}" || errorExit "Running wrk failed"
+    fi
+
+    echo -e "\n################################################"
+    echo "### Run for ${TIME_SEC} seconds with ${CONCURRENCY} parallel connections done!"
+}
+
+runHey () {
+    local auth
+    local auth_hashed
+
+    if [[ "${AUTH}" =~ true ]]; then
+        auth_hashed=$(echo -n ${ARTIFACTORY_USER}:${ARTIFACTORY_PASSWORD} | base64)
+        hey_linux_$(arch) -z ${TIME_SEC}s -c ${CONCURRENCY} -m GET -H "Authorization: Basic ${auth_hashed}" "${ARTIFACTORY_URL}/artifactory/${FILE}" || errorExit "Running hey failed"
+    else
+        hey_linux_$(arch) -z ${TIME_SEC}s -c ${CONCURRENCY} -m GET "${ARTIFACTORY_URL}/artifactory/${FILE}" || errorExit "Running hey failed"
     fi
 
     echo -e "\n################################################"
@@ -129,11 +144,21 @@ runLoad () {
         if [[ "${ACTION}" =~ "upload" ]]; then
            echo "############ Running uploads!"
         fi
-        if [[ "${TOOL}" =~ ab ]]; then
-            runAb
-        elif [[ "${TOOL}" =~ wrk ]]; then
-            runWrk
-        fi
+
+        case "${TOOL}" in
+            ab)
+                runAb
+            ;;
+            wrk)
+                runWrk
+            ;;
+            hey)
+                runHey
+            ;;
+            *)
+                errorExit "TOOL ${TOOL} not supported"
+            ;;
+        esac
         [[ ! "${INFINITE}" =~ true ]] && break
     done
 }
