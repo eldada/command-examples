@@ -18,15 +18,18 @@ checkRequirements () {
         [[ -n "${REPO_PATH}" ]] || errorExit "REPO_PATH is not set"
     fi
 
-    echo -n "Checking needed variables are set... "
+    echo "Checking needed variables are set... "
     [[ "${TOOL}" =~ (ab|wrk|hey) ]] || errorExit "TOOL is not set to 'ab', 'wrk' or 'hey'"
     [[ -n "${CONCURRENCY}" ]] || errorExit "CONCURRENCY is not set"
     [[ -n "${TIME_SEC}" ]] || errorExit "TIME_SEC is not set"
     [[ -n "${ARTIFACTORY_URL}" ]] || errorExit "ARTIFACTORY_URL is not set"
     [[ -n "${FILE}" ]] || errorExit "FILE is not set"
     if [[ "${AUTH}" =~ true ]]; then
+        echo "AUTH is set to true. Using authenticated access"
         [[ -n "${ARTIFACTORY_USER}" ]] || errorExit "ARTIFACTORY_USER is not set"
         [[ -n "${ARTIFACTORY_PASSWORD}" ]] || errorExit "ARTIFACTORY_PASSWORD is not set"
+    else
+        echo "AUTH is set to false. Using anonymous access"
     fi
     echo "success"
 }
