@@ -7,7 +7,8 @@ RUN apt update && apt install -y vim curl git jq apache2-utils wrk dnsutils trac
     curl -L https://eldada.jfrog.io/artifactory/tools/hey/hey_linux_arm64 -o /usr/bin/hey_linux_aarch64 && \
     curl -L https://eldada.jfrog.io/artifactory/tools/hey/hey_linux_amd64 -o /usr/bin/hey_linux_x86_64 && \
     chmod +x /usr/bin/yq /usr/bin/hey* && \
-    echo 'alias hey="/usr/bin/hey_linux_$(arch)"' >> /home/ubuntu/.bashrc
+    echo 'alias hey="/usr/bin/hey_linux_$(arch)"' >> /home/ubuntu/.bashrc && \
+    curl -fL -s https://install-cli.jfrog.io | sh
 
 # Switch to ubuntu user and /home/ubuntu working directory
 USER ubuntu

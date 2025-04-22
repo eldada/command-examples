@@ -29,15 +29,16 @@ infinite: false
 #  2. If the download tests need to follow redirects, use the 'ab` tool as the 'wrk' tool does not follow redirects
 #  3. For uploads, the repository must exist
 
-# job0 is always enabled
+# Optional download job 0
 job0:
+  enabled: false
   tool: "wrk"
   parallelism: 1
   file: repo/folder/file0
   timeSec: "10"
   concurrency: "2"
 
-# Optional job 1
+# Optional download job 1
 job1:
   enabled: false
   tool: "wrk"
@@ -46,7 +47,7 @@ job1:
   timeSec: "10"
   concurrency: "2"
 
-# Optional job 2
+# Optional download job 2
 job2:
   enabled: false
   tool: "wrk"
@@ -55,7 +56,7 @@ job2:
   timeSec: "10"
   concurrency: "2"
 
-# Optional job 3
+# Optional download job 3
 job3:
   enabled: false
   tool: "wrk"

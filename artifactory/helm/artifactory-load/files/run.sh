@@ -41,12 +41,12 @@ checkReadiness () {
 }
 
 checkFileExists () {
-    echo -e "\n--- Checking File ${FILE} exists and auth is correct (${ARTIFACTORY_URL}/artifactory/${FILE})"
-
     if [[ "${ACTION}" =~ "upload" ]]; then
         echo "Upload tests. Skipping file existence check"
         return
     fi
+
+    echo -e "\n--- Checking File ${FILE} exists and auth is correct (${ARTIFACTORY_URL}/artifactory/${FILE})"
 
     local http_code
     local auth
@@ -141,29 +141,50 @@ runLoad () {
     echo -e "\n--- Running load on Artifactory"
     echo "Run for ${TIME_SEC} seconds with ${CONCURRENCY} parallel connections"
 
-    while true; do
-        echo -e "\n############ Date: $(date)"
-        echo "############ Running ${TOOL}"
-        if [[ "${ACTION}" =~ "upload" ]]; then
-           echo "############ Running uploads!"
-        fi
+    if [[ "${ACTION}" =~ "upload" ]]; then
+        echo "Upload test"
 
-        case "${TOOL}" in
-            ab)
-                runAb
-            ;;
-            wrk)
-                runWrk
-            ;;
-            hey)
-                runHey
-            ;;
-            *)
-                errorExit "TOOL ${TOOL} not supported"
-            ;;
-        esac
-        [[ ! "${INFINITE}" =~ true ]] && break
-    done
+        # Download artifactoryUploadLoad.sh
+        curl -f -s -k "https://raw.githubusercontent.com/eldada/command-examples/refs/heads/master/artifactory/artifactoryUploadLoad.sh" \
+            -o /home/ubuntu/artifactoryUploadLoad.sh || errorExit "Downloading artifactoryUploadLoad.sh failed"
+        chmod +x /home/ubuntu/artifactoryUploadLoad.sh
+
+        # Run the upload script
+        /home/ubuntu/artifactoryUploadLoad.sh --url "${ARTIFACTORY_URL}/artifactory" \
+                                              --user "${ARTIFACTORY_USER}" \
+                                              --repo "${REPO_PATH}" \
+                                              --password "${ARTIFACTORY_PASSWORD}" \
+                                              --number_of_files 500 \
+                                              --size "${FILE_SIZE_KB}" \
+                                              --duration "${TIME_SEC}" \
+                                              --threads "${CONCURRENCY}"
+
+    else
+        echo "Download test"
+        while true; do
+            echo -e "\n############ Date: $(date)"
+            echo "############ Running ${TOOL}"
+            if [[ "${ACTION}" =~ "upload" ]]; then
+               echo "############ Running uploads!"
+            fi
+
+            case "${TOOL}" in
+                ab)
+                    runAb
+                ;;
+                wrk)
+                    runWrk
+                ;;
+                hey)
+                    runHey
+                ;;
+                *)
+                    errorExit "TOOL ${TOOL} not supported"
+                ;;
+            esac
+            [[ ! "${INFINITE}" =~ true ]] && break
+        done
+    fi
 }
 
 terminate () {
