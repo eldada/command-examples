@@ -146,18 +146,18 @@ runLoad () {
 
         # Download artifactoryUploadLoad.sh
         curl -f -s -k "https://raw.githubusercontent.com/eldada/command-examples/refs/heads/master/artifactory/artifactoryUploadLoad.sh" \
-            -o /home/ubuntu/artifactoryUploadLoad.sh || errorExit "Downloading artifactoryUploadLoad.sh failed"
-        chmod +x /home/ubuntu/artifactoryUploadLoad.sh
+            -o artifactoryUploadLoad.sh || errorExit "Downloading artifactoryUploadLoad.sh failed"
+        chmod +x artifactoryUploadLoad.sh
 
         # Run the upload script
-        /home/ubuntu/artifactoryUploadLoad.sh --url "${ARTIFACTORY_URL}/artifactory" \
-                                              --user "${ARTIFACTORY_USER}" \
-                                              --repo "${REPO_PATH}" \
-                                              --password "${ARTIFACTORY_PASSWORD}" \
-                                              --number_of_files 500 \
-                                              --size "${FILE_SIZE_KB}" \
-                                              --duration "${TIME_SEC}" \
-                                              --threads "${CONCURRENCY}"
+        ./artifactoryUploadLoad.sh --url "${ARTIFACTORY_URL}/artifactory" \
+                                  --user "${ARTIFACTORY_USER}" \
+                                  --repo "${REPO_PATH}" \
+                                  --password "${ARTIFACTORY_PASSWORD}" \
+                                  --number_of_files 600 \
+                                  --size "${FILE_SIZE_KB}" \
+                                  --duration "${TIME_SEC}" \
+                                  --threads "${CONCURRENCY}"
 
     else
         echo "Download test"
