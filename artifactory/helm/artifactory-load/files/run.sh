@@ -85,14 +85,7 @@ runAb () {
         auth="-A ${ARTIFACTORY_USER}:${ARTIFACTORY_PASSWORD}"
     fi
 
-    # If ACTION is upload, create the file to upload
-    if [[ "${ACTION}" =~ "upload" ]]; then
-        echo "Creating binary file of size ${FILE_SIZE_KB} KB to upload"
-        dd if=/dev/random of="/tmp/upload_${FILE_SIZE_KB}" bs=1024 count=${FILE_SIZE_KB} || errorExit "Creating file to upload failed"
-        ab -c ${CONCURRENCY} -t ${TIME_SEC} ${auth} -k -u "/tmp/upload_${FILE_SIZE_KB}" "${ARTIFACTORY_URL}/artifactory/${REPO_PATH}/${FILE}" || errorExit "Running ab failed"
-    else
-        ab -c ${CONCURRENCY} -t ${TIME_SEC} ${auth} -k "${ARTIFACTORY_URL}/artifactory/${FILE}" || errorExit "Running ab failed"
-    fi
+    ab -c ${CONCURRENCY} -t ${TIME_SEC} ${auth} -k "${ARTIFACTORY_URL}/artifactory/${FILE}" || errorExit "Running ab failed"
 
     echo -e "\n################################################"
     echo "### Run for ${TIME_SEC} seconds with ${CONCURRENCY} parallel connections done!"
@@ -137,28 +130,31 @@ runHey () {
     echo "### Run for ${TIME_SEC} seconds with ${CONCURRENCY} parallel connections done!"
 }
 
+runUpload () {
+    # Download the artifactoryUploadLoad.sh script
+    curl -f -s -k "https://raw.githubusercontent.com/eldada/command-examples/refs/heads/master/artifactory/artifactoryUploadLoad.sh" \
+        -o artifactoryUploadLoad.sh || errorExit "Downloading artifactoryUploadLoad.sh failed"
+    chmod +x artifactoryUploadLoad.sh
+
+    # Run the upload script
+    ./artifactoryUploadLoad.sh --url "${ARTIFACTORY_URL}/artifactory" \
+                              --user "${ARTIFACTORY_USER}" \
+                              --repo "${REPO_PATH}" \
+                              --password "${ARTIFACTORY_PASSWORD}" \
+                              --number_of_files 600 \
+                              --size "${FILE_SIZE_KB}" \
+                              --duration "${TIME_SEC}" \
+                              --threads "${CONCURRENCY}"
+
+}
+
 runLoad () {
     echo -e "\n--- Running load on Artifactory"
     echo "Run for ${TIME_SEC} seconds with ${CONCURRENCY} parallel connections"
 
     if [[ "${ACTION}" =~ "upload" ]]; then
         echo "Upload test"
-
-        # Download artifactoryUploadLoad.sh
-        curl -f -s -k "https://raw.githubusercontent.com/eldada/command-examples/refs/heads/master/artifactory/artifactoryUploadLoad.sh" \
-            -o artifactoryUploadLoad.sh || errorExit "Downloading artifactoryUploadLoad.sh failed"
-        chmod +x artifactoryUploadLoad.sh
-
-        # Run the upload script
-        ./artifactoryUploadLoad.sh --url "${ARTIFACTORY_URL}/artifactory" \
-                                  --user "${ARTIFACTORY_USER}" \
-                                  --repo "${REPO_PATH}" \
-                                  --password "${ARTIFACTORY_PASSWORD}" \
-                                  --number_of_files 600 \
-                                  --size "${FILE_SIZE_KB}" \
-                                  --duration "${TIME_SEC}" \
-                                  --threads "${CONCURRENCY}"
-
+        runUpload
     else
         echo "Download test"
         while true; do
