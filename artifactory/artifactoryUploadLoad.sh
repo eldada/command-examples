@@ -12,7 +12,7 @@ UPLOAD_DURATION=20
 THREADS=5
 
 ART_URL="http://localhost"
-REPO_NAME="test"
+REPO_NAME="example-repo-local"
 ARTIFACTORY_USER="admin"
 ARTIFACTORY_PASSWORD="password"
 
@@ -34,7 +34,9 @@ Usage: ${SCRIPT_NAME} <options>
 -l | --url                             : Artifactory URL                            (defaults to ${ART_URL})
 -u | --user | --username               : Artifactory user                           (defaults to ${USER})
 -p | --pass | --password               : Artifactory password, API key or token     (defaults to ${PASS})
+-r | --repo                            : Repository name                            (defaults to ${REPO_NAME})
 -s | --size                            : Size in KB                                 (defaults to ${FILE_SIZE_KB})
+-n | --number_of_files                 : Number of files to generate                (defaults to ${NUM_FILES})
 -d | --duration                        : Duration of test in seconds                (defaults to ${UPLOAD_DURATION})
 -t | --threads                         : Number of parallel upload threads          (defaults to ${THREADS})
 -c | --cleanup                         : Cleanup generated files and logs           (defaults to ${CLEANUP})
@@ -70,6 +72,10 @@ processOptions () {
             ;;
             -p | --pass | --password)
                 PASS="$2"
+                shift 2
+            ;;
+            -r | --repo )
+                REPO_NAME="$2"
                 shift 2
             ;;
             -n | --number_of_files)
@@ -152,7 +158,7 @@ uploadFiles () {
         --quiet=true \
         --threads="${THREADS}" \
         "${DEST_DIR}/*" \
-        ${REPO_NAME}/testFiles/ > "${UPLOAD_LOG}" 2>&1
+        "${REPO_NAME}/" > "${UPLOAD_LOG}" 2>&1
         if [[ $? -ne 0 ]]; then
             errorExit "Upload failed (elapsed time: $((CURRENT_TIME - START_TIME)) seconds). Check ${SCRIPT_NAME}.log"
         fi
