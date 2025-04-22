@@ -17,7 +17,7 @@ ARTIFACTORY_USER="admin"
 ARTIFACTORY_PASSWORD="password"
 
 CLEANUP=true
-CI=true
+export CI=true
 
 ######### Functions #########
 
