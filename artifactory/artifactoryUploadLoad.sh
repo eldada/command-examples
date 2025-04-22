@@ -116,7 +116,7 @@ processOptions () {
 
 testArtifactory () {
     echo -n "Check Artifactory readiness... "
-    jfrog rt ping --url="${ART_URL}" --user="${ARTIFACTORY_USER}" --password="${ARTIFACTORY_PASSWORD}" || errorExit "Artifactory readiness failed"
+    jf rt ping --url="${ART_URL}" --user="${ARTIFACTORY_USER}" --password="${ARTIFACTORY_PASSWORD}" || errorExit "Artifactory readiness failed"
     echo
 }
 
