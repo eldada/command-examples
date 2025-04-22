@@ -17,6 +17,7 @@ ARTIFACTORY_USER="admin"
 ARTIFACTORY_PASSWORD="password"
 
 CLEANUP=true
+CI=true
 
 ######### Functions #########
 
@@ -127,9 +128,11 @@ generateFiles () {
     [[ -d "$DEST_DIR" ]] && rm -rf "$DEST_DIR"
     mkdir -p "$DEST_DIR"
 
+    SEED=${RANDOM}
+
     for ((i=1; i<=NUM_FILES; i++)); do
         # Generate a unique file name
-        FILE_NAME="$DEST_DIR/file_$i.bin"
+        FILE_NAME="$DEST_DIR/file_${SEED}_${i}.bin"
 
         FILE_SIZE=$((FILE_SIZE_KB * 1024)) # Convert KB to bytes
 
@@ -160,7 +163,8 @@ uploadFiles () {
         "${DEST_DIR}/*" \
         "${REPO_NAME}/" > "${UPLOAD_LOG}" 2>&1
         if [[ $? -ne 0 ]]; then
-            errorExit "Upload failed (elapsed time: $((CURRENT_TIME - START_TIME)) seconds). Check ${SCRIPT_NAME}.log"
+            cat "${UPLOAD_LOG}"
+            errorExit "Upload failed (elapsed time: $((CURRENT_TIME - START_TIME)) seconds). See output of ${UPLOAD_LOG} above"
         fi
         CURRENT_TIME=$(date +%s)
         echo "Upload round ${ROUND} completed successfully (elapsed time: $((CURRENT_TIME - START_TIME)) seconds)"
