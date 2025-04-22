@@ -150,7 +150,7 @@ uploadFiles () {
 
     ROUND=1
     while [ "${CURRENT_TIME}" -lt "${END_TIME}" ]; do
-      jfrog rt upload \
+      jf rt upload \
         --url="${ART_URL}" \
         --user="${ARTIFACTORY_USER}" \
         --password="${ARTIFACTORY_PASSWORD}" \
@@ -182,7 +182,7 @@ cleanup () {
 
 main () {
     # Check if JFrog CLI is installed
-    if ! jfrog -v &> /dev/null; then
+    if ! jf -v &> /dev/null; then
         errorExit "JFrog CLI could not be found. Please install it and try again"
     fi
 
