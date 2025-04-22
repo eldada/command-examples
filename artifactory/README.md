@@ -23,7 +23,7 @@ helm repo update
 #### Default Install
 Install with Artifactory's default bundled database PostgreSQL
 ```shell
-helm upgrade --install artifactory jfrog/artifactory 
+helm upgrade --install artifactory jfrog/artifactory
 ```
 
 #### With an External PostgreSQL (recommended)
@@ -226,6 +226,7 @@ helm uninstall load
 * [artifactoryBenchmark.sh](artifactoryBenchmark.sh) - Run download, upload (or both) tests with a single file for a given size and iterations count. Results as CSV
 * [artifactoryLoad.sh](artifactoryLoad.sh) - Run parallel processes of `artifactoryBenchmark.sh`. This is useful for generating load on Artifactory
 * [artifactoryDownloadsLoop.sh](artifactoryDownloadsLoop.sh) - Create and upload a single generic binary generic file to Artifactory and download it in loops with set iterations and parallel threads
+* [artifactoryUploadLoad.sh](artifactoryUploadLoad.sh) - Create many unique generic binary files and upload to Artifactory with multiple threads using the [JFrog CLI](https://jfrog.com/confluence/display/JFROG/JFrog+CLI)
 
 Each script has its own usage you can get with
 ```shell
