@@ -31,6 +31,19 @@ checkRequirements () {
     else
         echo "AUTH is set to false. Using anonymous access"
     fi
+
+    # Make sure RANDOM_WAIT_TIME_UP_TO is set to an integer and default to 1 if not set
+    if [[ -z "${RANDOM_WAIT_TIME_UP_TO}" ]]; then
+        RANDOM_WAIT_TIME_UP_TO=1 # This will cause a 0 wait time
+    elif [[ ${RANDOM_WAIT_TIME_UP_TO} == "0" ]]; then
+        RANDOM_WAIT_TIME_UP_TO=1 # This will cause a 0 wait time
+    else
+        # Make sure the RANDOM_WAIT_TIME_UP_TO is set to an integer
+        if ! [[ "${RANDOM_WAIT_TIME_UP_TO}" =~ ^[0-9]+$ ]]; then
+            errorExit "RANDOM_WAIT_TIME_UP_TO is not set to an integer"
+        fi
+    fi
+
     echo "success"
 }
 
@@ -64,7 +77,7 @@ checkFileExists () {
     http_code=$(curl -f -s -k -o /dev/null ${head} --write-out "%{http_code}" ${auth} "${ARTIFACTORY_URL}/artifactory/${FILE}")
 
     case "${http_code}" in
-        20*)
+        20*|30*)
             echo "File ${FILE} exists and auth is good (http code ${http_code})"
         ;;
         401)
@@ -151,6 +164,11 @@ runUpload () {
 runLoad () {
     echo -e "\n--- Running load on Artifactory"
     echo "Run for ${TIME_SEC} seconds with ${CONCURRENCY} parallel connections"
+
+    # Inject a random wait time to avoid all test pods running the test at the same time
+    local wait_time=$((RANDOM % RANDOM_WAIT_TIME_UP_TO))
+    echo "Waiting ${wait_time} seconds before starting the test"
+    sleep ${wait_time}
 
     if [[ "${ACTION}" =~ "upload" ]]; then
         echo "Upload test"

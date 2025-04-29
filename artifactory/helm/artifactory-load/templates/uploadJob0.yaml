@@ -65,6 +65,8 @@ spec:
               value: "{{ .Values.uploadJob0.concurrency }}"
             - name: INFINITE
               value: "{{ .Values.infinite }}"
+            - name: RANDOM_WAIT_TIME_UP_TO
+              value: "{{ .Values.randomWaitTimeUpTo }}"
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:

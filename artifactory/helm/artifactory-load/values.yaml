@@ -16,9 +16,12 @@ artifactory:
 # Infinite loop or run once
 infinite: false
 
+# Random wait time before execution starts in seconds (spread the initial load). To disable, set this to 0
+randomWaitTimeUpTo: 10
+
 ## Multiple Jobs to run different download use cases at the same time
 ## Variables for each job:
-#  tool:        The tool to use for the tests (ab, wrk or hey)
+#  tool:        The tool to use for the tests (ab, wrk or hey). Default to `hey` (as it's the only one that follows redirect responses)
 #  parallelism: How many pods to run in parallel per job
 #  file:        File to download from Artifactory
 #  timeSec:     How long to run the job in seconds
@@ -32,7 +35,7 @@ infinite: false
 # Optional download job 0
 job0:
   enabled: false
-  tool: "wrk"
+  tool: "hey"
   parallelism: 1
   file: repo/folder/file0
   timeSec: "10"
@@ -41,7 +44,7 @@ job0:
 # Optional download job 1
 job1:
   enabled: false
-  tool: "wrk"
+  tool: "hey"
   parallelism: 1
   file: repo/folder/file1
   timeSec: "10"
@@ -50,7 +53,7 @@ job1:
 # Optional download job 2
 job2:
   enabled: false
-  tool: "wrk"
+  tool: "hey"
   parallelism: 1
   file: repo/folder/file2
   timeSec: "10"
@@ -59,7 +62,7 @@ job2:
 # Optional download job 3
 job3:
   enabled: false
-  tool: "wrk"
+  tool: "hey"
   parallelism: 1
   file: repo/folder/file3
   timeSec: "10"

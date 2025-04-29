@@ -1,8 +1,10 @@
 
 ###################################
 Great news!
-You have load jobs pods running load on Artifactory:
+You have the following download load jobs pods running load on Artifactory:
+{{- if .Values.job1.enabled }}
 * Job 0: {{ .Values.job0.parallelism }} pods
+{{- end }}
 {{- if .Values.job1.enabled }}
 * Job 1: {{ .Values.job1.parallelism }} pods
 {{- end }}
@@ -11,6 +13,14 @@ You have load jobs pods running load on Artifactory:
 {{- end }}
 {{- if .Values.job3.enabled }}
 * Job 3: {{ .Values.job3.parallelism }} pods
+{{- end }}
+
+You have the following upload load jobs pods running load on Artifactory:
+{{- if .Values.uploadJob0.enabled }}
+* Upload Job 0: {{ .Values.uploadJob0.parallelism }} pods
+{{- end }}
+{{- if .Values.uploadJob1.enabled }}
+* Upload Job 1: {{ .Values.uploadJob1.parallelism }} pods
 {{- end }}
 
 Artifactory URL: {{.Values.artifactory.url}}
