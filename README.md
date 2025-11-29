@@ -354,34 +354,34 @@ screen ~/Library/Containers/com.docker.docker/Data/com.docker.driver.amd64-linux
 # Ctrl +A +D to exit
 ```
 
-* Connect to Rancher Desktop VM on Mac
-```shell
-LIMA_HOME="${HOME}/Library/Application Support/rancher-desktop/lima" "/Applications/Rancher Desktop.app/Contents/Resources/resources/darwin/lima/bin/limactl" shell 0
-```
+* Adding an insecure registry in Rancher Desktop
+   1. Connect to the Rancher Desktop VM on Mac
+      ```shell
+      LIMA_HOME="${HOME}/Library/Application Support/rancher-desktop/lima" "/Applications/Rancher Desktop.app/Contents/Resources/resources/darwin/lima/bin/limactl" shell 0
+      ```
 
-* Adding insecure registry in Rancher Desktop
-Once in the VM
-```shell
-vi /etc/docker/daemon.json
-```
+   2. Once in the VM
+      ```shell
+      vi /etc/docker/daemon.json
+      ```
 
-Edit the file with the insecure registries you want
-```json
-{
-  "features": {
-    "containerd-snapshotter": false
-  },
-  "insecure-registries": [
-    "host.docker.internal",
-    "dummy.registry"
-  ]
-}
-```
+   3. Edit the file with the insecure registries you want
+      ```json
+      {
+        "features": {
+          "containerd-snapshotter": false
+      },
+        "insecure-registries": [
+        "host.docker.internal",
+        "dummy.registry"
+        ]
+      }
+      ```
 
-Restart the Docker daemon
-```shell
-sudo service docker restart
-```
+   4. Restart the Docker daemon
+      ```shell
+      sudo service docker restart
+      ```
 
 * Remove `none` images (usually leftover failed docker builds)
 ```shell
