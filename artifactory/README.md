@@ -24,7 +24,14 @@ helm repo update
 Install with Artifactory's default bundled database PostgreSQL
 ```shell
 helm upgrade --install artifactory jfrog/artifactory
+
+# The PostgreSQL helm chart will generate a new random password for the DB every time you run this, so it's best to set the password on the first install
+helm upgrade --install artifactory jfrog/artifactory --set postgresql.auth.password=PassW0rd1X
+
+# Using a values-simple.yaml with some good defaults
+helm upgrade --install artifactory jfrog/artifactory -f values-examples/values-simple.yaml
 ```
+
 
 #### With an External PostgreSQL (recommended)
 Install Artifactory with external PostgreSQL database in K8s
