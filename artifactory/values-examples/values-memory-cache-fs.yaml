@@ -41,4 +41,3 @@ artifactory:
       cache:
         enabled: true
 
-splitServicesToContainers: true

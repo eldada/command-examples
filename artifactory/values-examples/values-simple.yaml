@@ -1,0 +1,29 @@
+## Custom values for artifactory.
+artifactory:
+
+  ## IMPORTANT: Artifactory masterKey and joinKey are immutable and should not be changed after the first installation.
+  masterKey: AAFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFBB
+  joinKey: BBEEEEEEEEEEEEEEEEEEEEEEEEEEEEBB
+
+  ## To provide support for HA
+  extraEnvironmentVariables:
+    - name : JF_SHARED_NODE_HAENABLED
+      value: "true"
+
+## Nginx
+nginx:
+  disableProxyBuffering: true
+
+  ## Logs to stdout and stderr
+  logs:
+    stderr: true
+    stdout: true
+    level: warn
+
+## Configuration values for the PostgreSQL dependency sub-chart
+postgresql:
+  auth:
+    password: "Password321"
+
+
+databaseUpgradeReady: true

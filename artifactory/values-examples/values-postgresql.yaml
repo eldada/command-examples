@@ -22,5 +22,3 @@ database:
   user: artifactory
   password: password1
   url: 'jdbc:postgresql://postgresql:5432/artifactory'
-
-splitServicesToContainers: true

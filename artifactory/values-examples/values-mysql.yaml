@@ -29,4 +29,3 @@ database:
 artifactory:
   preStartCommand: 'echo "###### Getting MySQL driver ######"; mkdir -p /opt/jfrog/artifactory/var/bootstrap/artifactory/tomcat/lib; curl -k -s -L -o /opt/jfrog/artifactory/var/bootstrap/artifactory/tomcat/lib/mysql-connector-java.jar https://jcenter.jfrog.io/artifactory/jcenter/mysql/mysql-connector-java/8.0.23/mysql-connector-java-8.0.23.jar; echo "##################################"'
 
-splitServicesToContainers: true
